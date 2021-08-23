@@ -51,4 +51,4 @@ class Client extends ShewenyClient {
   colors = config.colors;
 }
 const client = new Client();
-client.login(config.token);
+client.login(client.config.token);
