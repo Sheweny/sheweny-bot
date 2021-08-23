@@ -1,0 +1,34 @@
+{
+  "name": "sheweny-bot",
+  "version": "1.0.0",
+  "description": "A bot using sheweny framework for official discord server",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sheweny/sheweny-bot.git"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "sheweny",
+    "framework"
+  ],
+  "author": "Smaug6739",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sheweny/sheweny-bot/issues"
+  },
+  "homepage": "https://github.com/Sheweny/sheweny-bot#readme",
+  "dependencies": {
+    "@sheweny/resolve": "^1.3.1",
+    "@types/ms": "^0.7.31",
+    "discord.js": "^13.1.0",
+    "ms": "^2.1.3",
+    "sheweny": "git+ssh://git@github.com:Sheweny/framework.git#master",
+    "toml": "^3.0.0"
+  }
+}

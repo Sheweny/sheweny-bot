@@ -1,3 +1,5 @@
+# Config
+config.toml
 # Logs
 logs
 *.log
