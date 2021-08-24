@@ -12,7 +12,7 @@ export class RestartCommand extends ApplicationCommand {
           {
             name: "channel",
             description: "Channel to send the rules",
-            type: "STRING",
+            type: "CHANNEL",
             required: true,
           },
         ],

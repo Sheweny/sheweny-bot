@@ -13,7 +13,7 @@ export class MuteCommand extends ApplicationCommand {
         options: [
           {
             name: "user",
-            type: "STRING",
+            type: "USER",
             description: "The user to mute",
             required: true,
           },

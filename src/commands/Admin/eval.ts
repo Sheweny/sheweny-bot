@@ -46,7 +46,7 @@ export class EvalCommand extends ApplicationCommand {
       return interaction.reply(`\`\`\`js\n${err.stack}\`\`\``);
     }
     const token = this.client.config.token;
-    const regex = new RegExp(token + "g");
+    const regex = new RegExp(token, "g");
     evaled = evaled.replace(regex, "no.");
 
     const fullLen = evaled.length;

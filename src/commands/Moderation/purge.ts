@@ -31,7 +31,7 @@ export class PurgeCommand extends ApplicationCommand {
               {
                 name: "user",
                 description: "User",
-                type: "STRING",
+                type: "USER",
                 required: true,
               },
               {

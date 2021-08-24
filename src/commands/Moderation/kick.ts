@@ -12,7 +12,7 @@ export class KickCommand extends ApplicationCommand {
         options: [
           {
             name: "user",
-            type: "STRING",
+            type: "USER",
             description: "The user to kick",
             required: true,
           },
