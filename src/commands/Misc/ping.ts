@@ -7,7 +7,7 @@ export class PingCommand extends ApplicationCommand {
       client,
       {
         name: "ping",
-        description: "Ping the bot",
+        description: "Ping Pong",
       },
       {
         category: "Misc",
