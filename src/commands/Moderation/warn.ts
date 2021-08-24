@@ -14,6 +14,7 @@ export class WarnCommand extends ApplicationCommand {
             name: "user",
             type: "USER",
             description: "The user to warn",
+            required: true,
           },
           {
             name: "reason",
