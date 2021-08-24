@@ -11,7 +11,7 @@ export class PullCommand extends ApplicationCommand {
         description: "Pull the code of bot in github repo",
         options: [
           {
-            name: "origin",
+            name: "branch",
             type: "STRING",
             description: "The branch to pull",
             required: true,
