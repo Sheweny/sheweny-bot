@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed } from "discord.js";
 import ms from "ms";
 import type { CommandInteraction } from "discord.js";
 
@@ -10,6 +10,7 @@ export class MuteCommand extends ApplicationCommand {
       {
         name: "mute",
         description: "Mute a user",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -33,26 +34,20 @@ export class MuteCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    const argUser = interaction.options.get("user")!.value;
-    const argTime: string = interaction.options.get("time")!.value as string;
-    const user = await this.client.util.resolveMember(
-      interaction.guild,
-      argUser
-    );
-    let muteRole = interaction.guild!.roles.cache.find(
-      (r) => r.name === "Muted"
-    );
-    const muteTime = argTime || "60s";
-    if (!user) return interaction.replyErrorMessage(`User not found.`);
+    const member = interaction.options.getMember("user", true) as GuildMember;
+    const muteTime = interaction.options.getString("time", false);
+
+    let muteRole = interaction.guild!.roles.cache.find((r) => r.name === "Muted");
+    if (!member) return interaction.replyErrorMessage(`User not found.`, true);
     if (!muteRole) {
       muteRole = await interaction.guild!.roles.create({
         name: "Muted",
         color: "#2f3136",
         permissions: [],
       });
-      interaction.guild!.channels.cache.forEach(async (channel: any) => {
+      interaction.guild!.channels.cache.forEach(async (channel) => {
         if (channel.isThread()) return;
-        await channel.updateOverwrite!(muteRole!, {
+        await channel.permissionOverwrites.edit(muteRole!, {
           SEND_MESSAGES: false,
           ADD_REACTIONS: false,
           CONNECT: false,
@@ -60,25 +55,28 @@ export class MuteCommand extends ApplicationCommand {
       });
     }
 
-    await user.roles.add(muteRole.id);
+    await member.roles.add(muteRole.id);
     interaction.replySuccessMessage(
-      `<@${user.id}> is muted for ${ms(ms(muteTime))}.`
+      `<@${member.id}> is muted for ${muteTime ? ms(ms(muteTime)) : "ever"}.`
     );
 
-    setTimeout(() => {
-      user.roles.remove(muteRole!.id);
-    }, ms(muteTime));
+    if (muteTime)
+      setTimeout(() => {
+        member.roles.remove(muteRole!.id);
+      }, ms(muteTime));
     const embed = new MessageEmbed()
       .setAuthor(
-        `${user.user.username} (${user.id})`,
-        user.user.displayAvatarURL()
+        `${member.user.tag} (${member.id})`,
+        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
       )
       .setColor(this.client.colors.orange)
-      .setDescription(`**Action**: mute\n**Time**: ${ms(ms(muteTime))}`)
+      .setDescription(
+        `**Action**: mute\n**Time**: ${muteTime ? ms(ms(muteTime)) : "ever"}`
+      )
       .setTimestamp()
       .setFooter(
         interaction.user.username,
-        interaction.user.displayAvatarURL()
+        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
       );
     if (this.client.config.moderation_logs) {
       const channel = this.client.util.resolveChannel(
@@ -86,9 +84,7 @@ export class MuteCommand extends ApplicationCommand {
         this.client.config.moderation_logs
       );
       if (channel) {
-        if (
-          channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES")
-        ) {
+        if (channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES")) {
           channel.send({ embeds: [embed] });
         }
       }

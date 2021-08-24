@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class WarnCommand extends ApplicationCommand {
@@ -9,6 +9,7 @@ export class WarnCommand extends ApplicationCommand {
       {
         name: "warn",
         description: "Warn member of the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -31,40 +32,42 @@ export class WarnCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    const member = await this.client.util.resolveMember(
-      interaction.guild,
-      interaction.options.get("user")!.value
-    );
-    if (!member) return interaction.replyErrorMessage("User not found.");
+    const member = interaction.options.getMember("user") as GuildMember;
+    if (!member) return interaction.replyErrorMessage("User not found.", true);
+
     const reason: string =
-      (interaction.options.get("reason")?.value as string) ||
-      "No reason was provided.";
+      interaction.options.getString("reason") || "No reason was provided.";
+
     const dmEmbed = new MessageEmbed()
       .setTitle("Warn")
       .setColor(this.client.colors.orange)
-      .setAuthor(member.user.username, member.user.displayAvatarURL())
-      .setThumbnail(member.user.displayAvatarURL())
+      .setAuthor(
+        member.user.tag,
+        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
+      )
+      .setThumbnail(
+        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
+      )
       .setDescription(
         `**Action :** Warn\n**Reason :** ${reason}${
           reason.endsWith(".") ? "" : "."
         }\n**Server :** ${interaction.guild!.name}\n**Moderator :** ${
-          interaction.user.username
+          interaction.user.tag
         }`
       )
       .setTimestamp()
       .setFooter(
-        `By : ${interaction.user.username}`,
-        interaction.user.displayAvatarURL()
+        `By : ${interaction.user.tag}`,
+        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
       );
     try {
       await member.send({ embeds: [dmEmbed] });
     } catch {
-      return interaction.replyErrorMessage(
-        "I can't send a message to this user."
-      );
+      return interaction.replyErrorMessage("I can't send a message to this user.", true);
     }
     interaction.replySuccessMessage(
-      `I have successfully warn the user \`${member.user.tag}\`.`
+      `I have successfully warn the user \`${member.user.tag}\`.`,
+      true
     );
   }
 }

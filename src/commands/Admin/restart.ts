@@ -8,6 +8,7 @@ export class RestartCommand extends ApplicationCommand {
       {
         name: "restart",
         description: "Restart the bot",
+        type: "CHAT_INPUT",
       },
       {
         category: "Admin",
@@ -16,7 +17,7 @@ export class RestartCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    await interaction.replySuccessMessage(`OK .`);
-    process.exit();
+    await interaction.replySuccessMessage(`Success`);
+    return process.exit();
   }
 }
