@@ -17,6 +17,9 @@ export class RestartCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
+    await this.client.handlers.applicationCommands.deleteAllCommands(
+      "877090306103840778"
+    );
     await interaction.replySuccessMessage(`Success`);
     return process.exit();
   }
