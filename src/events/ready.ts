@@ -1,5 +1,5 @@
-import { Event, ShewenyClient } from "sheweny";
-import type { Client } from "discord.js";
+import { Event } from "sheweny";
+import type { ShewenyClient } from "sheweny";
 
 export class Ready extends Event {
   constructor(client: ShewenyClient) {
@@ -8,7 +8,8 @@ export class Ready extends Event {
       once: true,
     });
   }
-  execute(client: Client) {
-    console.log("Logged in as " + client.user?.tag);
+
+  execute() {
+    console.log(`${this.client.user?.tag} is connected`);
   }
 }

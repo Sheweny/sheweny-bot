@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class UnmuteCommand extends ApplicationCommand {
@@ -9,6 +9,7 @@ export class UnmuteCommand extends ApplicationCommand {
       {
         name: "unmute",
         description: "Unmute user in the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -25,41 +26,28 @@ export class UnmuteCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    const argUser = interaction.options.get("user")!.value;
-    const user = await this.client.util.resolveMember(
-      interaction.guild,
-      argUser
-    );
-    if (!user) return interaction.replyErrorMessage(`User not found.`);
-    const muteRole = interaction.guild!.roles.cache.find(
-      (r) => r.name === "Muted"
-    );
-    if (!muteRole)
-      return interaction.replyErrorMessage(`This user is not muted.`);
-    if (!user.roles.cache.has(muteRole.id))
-      return interaction.replyErrorMessage(`This user is not muted.`);
-    user.roles.remove(muteRole.id);
-    interaction.replySuccessMessage(`<@${user.id}> is now unmuted`);
+    const member = interaction.options.getMember("user") as GuildMember;
+    if (!member) return interaction.replyErrorMessage(`User not found.`, true);
+
+    const muteRole = interaction.guild!.roles.cache.find((r) => r.name === "Muted");
+    if (!muteRole) return interaction.replyErrorMessage(`No mute role.`, true);
+    if (!member.roles.cache.has(muteRole.id))
+      return interaction.replyErrorMessage(`This user is not muted.`, true);
+
+    member.roles.remove(muteRole.id);
+    await interaction.replySuccessMessage(`<@${member.id}> is now unmuted`);
+
     const embed = new MessageEmbed()
-      .setAuthor(
-        `${user.user.username} (${user.id})`,
-        user.user.displayAvatarURL()
-      )
+      .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 }))
       .setColor(this.client.colors.green)
       .setDescription(`**Action**: unmute`)
       .setTimestamp()
-      .setFooter(
-        interaction.user.username,
-        interaction.user.displayAvatarURL()
-      );
+      .setFooter(interaction.user.username, interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 }));
     const channel = this.client.util.resolveChannel(
       interaction.guild,
       this.client.config.channels.moderation_logs
     );
-    if (
-      channel &&
-      channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES")
-    )
+    if (channel && channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES"))
       channel.send({ embeds: [embed] });
   }
 }

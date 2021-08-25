@@ -4,27 +4,43 @@ import { CommandInteraction } from "discord.js";
 import { ShewenyClient } from "sheweny";
 import { DiscordResolve } from "@sheweny/resolve";
 import toml from "toml";
+import { IConfig } from "./interfaces/Config";
 
 declare module "discord.js" {
   interface CommandInteraction {
-    replySuccessMessage(content: string): any;
-    replyErrorMessage(content: string): any;
+    replySuccessMessage(content: string, ephemeral?: boolean): any;
+    replyErrorMessage(content: string, ephemeral?: boolean): any;
   }
 }
 
-CommandInteraction.prototype.replySuccessMessage = function (content: string) {
-  return this.reply(`${config.emojis.success} ${content}`);
+CommandInteraction.prototype.replySuccessMessage = function (
+  content: string,
+  ephemeral?: boolean
+) {
+  return this.reply({
+    content: `${config.emojis.success} ${content}`,
+    ephemeral: ephemeral || false,
+  });
 };
-CommandInteraction.prototype.replyErrorMessage = function (content: string) {
-  return this.reply(`${config.emojis.error} ${content}`);
+CommandInteraction.prototype.replyErrorMessage = function (
+  content: string,
+  ephemeral?: boolean
+) {
+  return this.reply({
+    content: `${config.emojis.error} ${content}`,
+    ephemeral: ephemeral || false,
+  });
 };
 
-const config = toml.parse(
+const config: IConfig = toml.parse(
   readFileSync(join(__dirname, "../config.toml")).toString()
 );
 
 class Client extends ShewenyClient {
-  util: DiscordResolve;
+  public util: DiscordResolve;
+  readonly config = config;
+  readonly colors = config.colors;
+
   constructor() {
     super({
       admins: config.bot_admins,
@@ -45,10 +61,20 @@ class Client extends ShewenyClient {
         },
       },
     });
+
     this.util = new DiscordResolve(this);
+
+    this.handlers.applicationCommands!.on(
+      "cooldownLimit",
+      (interaction: CommandInteraction) => {
+        return interaction.reply({ content: "Please slow down", ephemeral: true });
+      }
+    );
   }
-  config = config;
-  colors = config.colors;
+
+  public initBot() {
+    this.login(this.config.token);
+  }
 }
-const client = new Client();
-client.login(client.config.token);
+
+new Client().initBot();

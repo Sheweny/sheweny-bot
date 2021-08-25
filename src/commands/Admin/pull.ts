@@ -9,6 +9,7 @@ export class PullCommand extends ApplicationCommand {
       {
         name: "pull",
         description: "Pull the code of bot in github repo",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "branch",
@@ -25,11 +26,12 @@ export class PullCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    const outputErr = (msg: CommandInteraction, stdData: any) => {
+    const outputErr = async (stdData: any) => {
       const { stdout, stderr } = stdData;
       const message = stdout.concat(`\`\`\`${stderr}\`\`\``);
-      msg.editReply(message);
+      await interaction.editReply(message);
     };
+
     const doExec = (cmd: string, opts = {}): Promise<any> => {
       return new Promise((resolve, reject) => {
         exec(cmd, opts, (err, stdout, stderr) => {
@@ -38,12 +40,14 @@ export class PullCommand extends ApplicationCommand {
         });
       });
     };
-    const command = interaction.options.get("branch")!.value;
+
+    const command = interaction.options.getString("branch", true);
     await interaction.reply(
       `${this.client.config.emojis.loading} Executing \`${command}\`...`
     );
-    let stdOut = await doExec(`git pull origin ${command as string}`).catch(
-      (data) => outputErr(interaction, data)
+    
+    let stdOut = await doExec(`git pull origin ${command}`).catch((data) =>
+      outputErr(data)
     );
     return interaction.editReply(`\`\`\`bash\n${stdOut.toString()}\n\`\`\``);
   }

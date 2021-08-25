@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class BanCommand extends ApplicationCommand {
@@ -9,6 +9,7 @@ export class BanCommand extends ApplicationCommand {
       {
         name: "ban",
         description: "Ban member from the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -33,37 +34,32 @@ export class BanCommand extends ApplicationCommand {
   }
   async execute(interaction: CommandInteraction) {
     const argReason =
-      interaction.options.get("reason")?.value || "No reason was provided.";
-    const argUser = interaction.options.get("user")!.value;
-    const user = await this.client.util.resolveMember(
-      interaction.guild,
-      argUser
-    );
-    if (!user) return interaction.replyErrorMessage(`User not found.`);
+      interaction.options.getString("reason", false) || "No reason was provided.";
+    const member = interaction.options.getMember("user", true) as GuildMember;
+    if (!member) return interaction.replyErrorMessage(`User not found.`, true);
+
     const embed = new MessageEmbed()
-      .setAuthor(`${user.username} (${user.id})`)
+      .setAuthor(`${member.user.tag} (${member.id})`)
       .setColor(this.client.colors.red)
       .setDescription(
         `**Action**: ban\n**Reason**: ${argReason}\n**Guild :** ${
           interaction.guild!.name
         }\nModerator : ${interaction.user.username}`
       )
-      .setThumbnail(user.user.displayAvatarURL())
+      .setThumbnail(
+        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
+      )
       .setTimestamp()
       .setFooter(
         interaction.user.username,
-        interaction.user.displayAvatarURL()
+        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
       );
-    if (user.bannable) {
+    if (member.bannable) {
       try {
-        await user.send({ embeds: [embed] });
+        await member.send({ embeds: [embed] });
       } finally {
-        user.ban({ reason: argReason }).then(() => {
-          interaction.reply({ embeds: [embed] }).then(() => {
-            setTimeout(() => {
-              interaction.deleteReply();
-            }, 5000);
-          });
+        member.ban({ reason: argReason }).then(async () => {
+          await interaction.reply({ embeds: [embed], ephemeral: true });
           const channel = this.client.util.resolveChannel(
             interaction.guild,
             this.client.config.channels.moderation_logs
@@ -75,6 +71,6 @@ export class BanCommand extends ApplicationCommand {
             channel.send({ embeds: [embed] });
         });
       }
-    } else interaction.replyErrorMessage(`I can't ban this user.`);
+    } else return interaction.replyErrorMessage(`I can't ban this user.`, true);
   }
 }

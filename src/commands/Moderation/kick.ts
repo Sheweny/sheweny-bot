@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class KickCommand extends ApplicationCommand {
@@ -9,6 +9,7 @@ export class KickCommand extends ApplicationCommand {
       {
         name: "kick",
         description: "Kick member from the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -32,42 +33,37 @@ export class KickCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    const argUser = interaction.options.get("user")!.value;
+    const member = interaction.options.getMember("user", true) as GuildMember;
     const reason =
-      interaction.options.get("reason")?.value || "No reason was given";
-    const interactionMember = await this.client.util.resolveMember(
-      interaction.guild,
-      interaction.user.id
-    );
-    const user = await this.client.util.resolveMember(
-      interaction.guild,
-      argUser
-    );
-    if (!user) return interaction.replyErrorMessage(`User not found.`);
+      interaction.options.getString("reason", false) || "No reason was given";
+    if (!member) return interaction.replyErrorMessage(`User not found.`, true);
     if (
-      interactionMember.roles.highest.comparePositionTo(user.roles.highest) <=
-        0 &&
+      (interaction.member as GuildMember).roles.highest.comparePositionTo(
+        member.roles.highest
+      ) <= 0 &&
       interaction.guild!.ownerId !== interaction.user.id
     )
-      return interaction.replyErrorMessage(
-        `You don't have the permission for this.`
-      );
+      return interaction.replyErrorMessage(`You don't have the permission for this.`, true);
     const embed = new MessageEmbed()
-      .setAuthor(`${user.user.username} (${user.id})`)
+      .setAuthor(`${member.user.tag} (${member.id})`)
       .setColor(this.client.colors.red)
-      .setDescription(`**Action**: kick\n**Reason**: ${reason}`)
-      .setThumbnail(user.user.displayAvatarURL())
+      .setDescription(
+        `**Action**: kick\n**Reason**: ${reason}\n**Guild**: ${interaction.guild!.name}`
+      )
+      .setThumbnail(
+        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
+      )
       .setTimestamp()
       .setFooter(
         interaction.user.username,
-        interaction.user.displayAvatarURL()
+        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
       );
-    if (user.kickable) {
+    if (member.kickable) {
       try {
-        await user.send({ embeds: [embed] });
+        await member.send({ embeds: [embed] });
       } finally {
-        user.kick(reason).then(() => {
-          interaction.reply({ embeds: [embed] });
+        member.kick(reason).then(() => {
+          interaction.reply({ embeds: [embed], ephemeral: true });
           const channel = this.client.util.resolveChannel(
             interaction.guild,
             this.client.config.channels.moderation_logs
