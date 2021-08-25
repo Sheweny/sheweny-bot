@@ -44,7 +44,8 @@ class Client extends ShewenyClient {
   constructor() {
     super({
       admins: config.bot_admins,
-      intents: ["GUILDS"],
+      intents: ["GUILDS", "GUILD_MEMBERS"],
+      partials: ["GUILD_MEMBER"],
       handlers: {
         applicationCommands: {
           directory: "./commands",
@@ -67,7 +68,10 @@ class Client extends ShewenyClient {
     this.handlers.applicationCommands!.on(
       "cooldownLimit",
       (interaction: CommandInteraction) => {
-        return interaction.reply({ content: "Please slow down", ephemeral: true });
+        return interaction.reply({
+          content: "Please slow down",
+          ephemeral: true,
+        });
       }
     );
   }
