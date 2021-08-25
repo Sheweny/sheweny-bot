@@ -9,6 +9,7 @@ export class ExecCommand extends ApplicationCommand {
       {
         name: "exec",
         description: "Exec a command in terminal",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "command",
@@ -24,12 +25,14 @@ export class ExecCommand extends ApplicationCommand {
       }
     );
   }
+
   async execute(interaction: CommandInteraction) {
-    const outputErr = (msg: CommandInteraction, stdData: any) => {
+    const outputErr = async (stdData: any) => {
       const { stdout, stderr } = stdData;
       const message = stdout.concat(`\`\`\`${stderr}\`\`\``);
-      msg.editReply(message);
+      await interaction.editReply(message);
     };
+
     const doExec = (cmd: string, opts = {}): Promise<any> => {
       return new Promise((resolve, reject) => {
         exec(cmd, opts, (err, stdout, stderr) => {
@@ -38,13 +41,13 @@ export class ExecCommand extends ApplicationCommand {
         });
       });
     };
-    const command = interaction.options.get("command")!.value;
+
+    const command = interaction.options.getString("command", true);
     await interaction.reply(
       `${this.client.config.emojis.loading} Executing \`${command}\`...`
     );
-    let stdOut = await doExec(command as string).catch((data) =>
-      outputErr(interaction, data)
-    );
+
+    let stdOut = await doExec(command).catch(async (data) => await outputErr(data));
     return interaction.editReply(`\`\`\`bash\n${stdOut.toString()}\n\`\`\``);
   }
 }

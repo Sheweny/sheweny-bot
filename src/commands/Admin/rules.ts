@@ -1,5 +1,11 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import {
+  CommandInteraction,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed,
+  TextChannel,
+} from "discord.js";
 
 export class RestartCommand extends ApplicationCommand {
   constructor(client: ShewenyClient) {
@@ -8,6 +14,7 @@ export class RestartCommand extends ApplicationCommand {
       {
         name: "rules",
         description: "Display the rules of the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "channel",
@@ -54,12 +61,12 @@ Server Invite: https://discord.gg/qgd85nEf5a
       .setTimestamp()
       .setFooter("Sheweny discord server rules");
 
-    const channel = this.client.util.resolveChannel(
-      interaction.guild,
-      interaction.options.get("channel")!.value
-    );
+    const channel = interaction.options.getChannel("channel", true) as TextChannel;
     if (!channel) return interaction.replyErrorMessage("Channel not found");
-    interaction.replySuccessMessage("OK .");
-    channel.send({ embeds: [embed] });
+    await interaction.replySuccessMessage("Success");
+    const button = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId("ruleCheck").setLabel("Check").setStyle("SUCCESS")
+    );
+    channel.send({ embeds: [embed], components: [button] });
   }
 }

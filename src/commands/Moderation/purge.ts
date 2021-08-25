@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, TextChannel } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class PurgeCommand extends ApplicationCommand {
@@ -9,6 +9,7 @@ export class PurgeCommand extends ApplicationCommand {
       {
         name: "purge",
         description: "Purge messages",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "messages",
@@ -18,7 +19,7 @@ export class PurgeCommand extends ApplicationCommand {
               {
                 name: "number",
                 description: "Number of messages",
-                type: "STRING",
+                type: "NUMBER",
                 required: true,
               },
             ],
@@ -37,7 +38,7 @@ export class PurgeCommand extends ApplicationCommand {
               {
                 name: "number",
                 description: "Number of messages",
-                type: "STRING",
+                type: "NUMBER",
                 required: true,
               },
             ],
@@ -53,35 +54,29 @@ export class PurgeCommand extends ApplicationCommand {
   async execute(interaction: CommandInteraction) {
     switch (interaction.options.getSubcommand(false)) {
       case "messages":
-        const channelTextMessages: any = interaction.channel;
-        const messagesToDelete = await interaction.channel!.messages.fetch({
-          limit: Math.min(
-            parseInt(interaction.options.get("number")!.value as string),
-            100
-          ),
+        const channelTextMessages = interaction.channel! as TextChannel;
+        const messagesToDelete = await channelTextMessages.messages.fetch({
+          limit: Math.min(interaction.options.getNumber("number", true), 100),
           before: interaction.id,
         });
         const embedMessages = new MessageEmbed()
           .setAuthor(
             interaction.user.username,
-            interaction.user.displayAvatarURL()
+            interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
           )
           .setColor(this.client.colors.red)
           .setDescription(
-            `**Action**: purge messages\n**Messages**: ${
-              interaction.options.get("number")!.value
-            }\n**Channel**: ${interaction.channel}`
+            `**Action**: purge messages\n**Messages**: ${interaction.options.getNumber(
+              "number",
+              true
+            )}\n**Channel**: ${channelTextMessages.name}`
           )
           .setTimestamp()
           .setFooter(`Executor : ${interaction.user.username}`);
         channelTextMessages
           .bulkDelete(messagesToDelete)
-          .then(() => {
-            interaction.reply({ embeds: [embedMessages] }).then(() => {
-              setTimeout(function () {
-                interaction.deleteReply();
-              }, 3000);
-            });
+          .then(async () => {
+            await interaction.reply({ embeds: [embedMessages], ephemeral: true });
           })
           .catch((err: Error) => {
             if (
@@ -90,27 +85,22 @@ export class PurgeCommand extends ApplicationCommand {
               )
             )
               interaction.replyErrorMessage(
-                `You cannot delete messages older than 14 days.`
+                `You cannot delete messages older than 14 days.`,
+                true
               );
             else
-              interaction.replyErrorMessage(
-                `An error occurred. Please try again.`
-              );
+              interaction.replyErrorMessage(`An error occurred. Please try again.`, true);
             console.error(err);
           });
         break;
       case "user":
-        const argNumber = parseInt(
-          interaction.options.get("number")!.value as string
-        );
-        const channelTextUser: any = interaction.channel;
-        const user = await this.client.util.resolveMember(
-          interaction.guild,
-          interaction.options.get("user")!.value
-        );
+        const argNumber = interaction.options.getNumber("number", true);
+        const channelTextUser = interaction.channel as TextChannel;
+        const user = interaction.options.getUser("user", true);
         if (isNaN(argNumber) || argNumber < 1 || argNumber > 100)
           return interaction.replyErrorMessage(
-            `You must specify a number between 1 and 100.`
+            `You must specify a number between 1 and 100.`,
+            true
           );
         const messagesOfUser: any = (
           await interaction.channel!.messages.fetch({
@@ -118,22 +108,23 @@ export class PurgeCommand extends ApplicationCommand {
             before: interaction.id,
           })
         ).filter((a) => a.author.id === user.id);
+
         messagesOfUser.length = Math.min(argNumber, messagesOfUser.length);
         if (messagesOfUser.length === 0 || !user)
-          return interaction.replyErrorMessage(`No message to delete`);
+          return interaction.replyErrorMessage(`No message to delete`, true);
         if (messagesOfUser.length === 1) await messagesOfUser[1].delete();
         else await channelTextUser.bulkDelete(messagesOfUser);
-        interaction.deleteReply();
+
         const embedLogs = new MessageEmbed()
           .setAuthor(
             interaction.user.username,
-            interaction.user.displayAvatarURL()
+            interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
           )
           .setColor(this.client.colors.red)
           .setDescription(
-            `**Action**: prune\n**Messages**: ${argNumber}\n**User**: ${user}`
+            `**Action**: purge\n**Messages**: ${argNumber}\n**User**: ${user.tag}`
           );
-        interaction.reply({ embeds: [embedLogs] });
+        await interaction.reply({ embeds: [embedLogs], ephemeral: true });
         break;
     }
   }

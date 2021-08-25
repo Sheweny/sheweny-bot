@@ -9,9 +9,10 @@ export class EvalCommand extends ApplicationCommand {
       {
         name: "eval",
         description: "Eval a javascript code",
+        type: "CHAT_INPUT",
         options: [
           {
-            name: "eval",
+            name: "code",
             description: "The code to eval",
             type: "STRING",
             required: true,
@@ -25,29 +26,19 @@ export class EvalCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    let evaled: any = interaction.options.get("eval")!.value;
-    try {
-      if (
-        interaction.options.get("options")?.value === "a" ||
-        interaction.options.get("options")?.value === "async"
-      ) {
-        evaled = `(async () => { ${(
-          interaction.options.get("eval")!.value as string
-        ).trim()} })()`;
-      }
+    let evaled = interaction.options.getString("code", true);
 
-      evaled = await eval(evaled! as string);
-      if (typeof evaled === "object") {
+    try {
+      evaled = await eval(evaled);
+      if (typeof evaled === "object")
         evaled = util.inspect(evaled, { depth: 0, showHidden: true });
-      } else {
-        evaled = String(evaled);
-      }
-    } catch (err: any) {
+    } catch (err) {
       return interaction.reply(`\`\`\`js\n${err.stack}\`\`\``);
     }
+
     const token = this.client.config.token;
     const regex = new RegExp(token, "g");
-    evaled = evaled.replace(regex, "no.");
+    evaled = evaled.replace(regex, "sorry but you won't see the token");
 
     const fullLen = evaled.length;
 
@@ -55,20 +46,21 @@ export class EvalCommand extends ApplicationCommand {
       return null;
     }
     if (fullLen > 2000) {
-      evaled = evaled.match(/[\s\S]{1,1900}[\n\r]/g) || [];
-      if (evaled.length > 3) {
+      const evaledMatch = evaled.match(/[\s\S]{1,1900}[\n\r]/g) || [];
+
+      if (evaledMatch.length > 3) {
         interaction.channel!.send({
-          content: `\`\`\`js\n${evaled![0] as string}\`\`\``,
+          content: `\`\`\`js\n${evaledMatch[0]}\`\`\``,
         });
         interaction.channel!.send({
-          content: `\`\`\`js\n${evaled![1] as string}\`\`\``,
+          content: `\`\`\`js\n${evaledMatch[1]}\`\`\``,
         });
         interaction.channel!.send({
-          content: `\`\`\`js\n${evaled![2] as string}\`\`\``,
+          content: `\`\`\`js\n${evaledMatch[2]}\`\`\``,
         });
         return;
       }
-      return evaled.forEach((message: any) => {
+      return evaledMatch.forEach((message: any) => {
         interaction.reply(`\`\`\`js\n${message}\`\`\``);
         return;
       });

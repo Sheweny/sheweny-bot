@@ -1,4 +1,5 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { ApplicationCommand } from "sheweny";
+import type { ShewenyClient } from "sheweny";
 import type { CommandInteraction } from "discord.js";
 
 export class PingCommand extends ApplicationCommand {
@@ -8,13 +9,15 @@ export class PingCommand extends ApplicationCommand {
       {
         name: "ping",
         description: "Ping Pong",
+        type: "CHAT_INPUT",
       },
       {
         category: "Misc",
       }
     );
   }
+
   execute(interaction: CommandInteraction) {
-    interaction.reply("Pong !");
+    return interaction.reply("Pong !");
   }
 }

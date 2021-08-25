@@ -9,6 +9,7 @@ export class UnbanCommand extends ApplicationCommand {
       {
         name: "unban",
         description: "Unban user in the guild",
+        type: "CHAT_INPUT",
         options: [
           {
             name: "user",
@@ -28,28 +29,39 @@ export class UnbanCommand extends ApplicationCommand {
   async execute(interaction: CommandInteraction) {
     try {
       const user = await this.client.util.resolveUser(
-        interaction.options.get("user")!.value
+        interaction.options.getString("user")
       );
-      if (!user) return interaction.replyErrorMessage(`User not found.`);
+      if (!user) return interaction.replyErrorMessage(`User not found.`, true);
       interaction.guild!.members.unban(user);
       const embed = new MessageEmbed()
-        .setAuthor(`${user.username} (${user.id})`, user.displayAvatarURL())
+        .setAuthor(
+          `${user.username} (${user.id})`,
+          user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
+        )
         .setColor(this.client.colors.red)
         .setDescription(`**Action**: unban`)
         .setTimestamp()
         .setFooter(
           interaction.user.username,
-          interaction.user.displayAvatarURL()
+          interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
         );
-      interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+
+      const channel = this.client.util.resolveChannel(
+        interaction.guild,
+        this.client.config.channels.moderation_logs
+      );
+      if (channel && channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES"))
+        channel.send({ embeds: [embed] });
     } catch (e: any) {
       console.log(e);
 
       if (e.message.match("Unknown User"))
-        return interaction.replyErrorMessage(`User not found.`);
+        return interaction.replyErrorMessage(`User not found.`, true);
       else
         return interaction.replyErrorMessage(
-          `An error has occurred. Please try again.`
+          `An error has occurred. Please try again.`,
+          true
         );
     }
   }
