@@ -26,19 +26,19 @@ export class EvalCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    let evaled = interaction.options.getString("code", true);
+    let evaled: string = interaction.options.getString("code", true);
 
     try {
       evaled = await eval(evaled);
       if (typeof evaled === "object")
         evaled = util.inspect(evaled, { depth: 0, showHidden: true });
-    } catch (err) {
+      else evaled = String(evaled);
+    } catch (err: any) {
       return interaction.reply(`\`\`\`js\n${err.stack}\`\`\``);
     }
-
     const token = this.client.config.token;
     const regex = new RegExp(token, "g");
-    evaled = evaled.replace(regex, "sorry but you won't see the token");
+    evaled = evaled.replaceAll(regex, "no.");
 
     const fullLen = evaled.length;
 
