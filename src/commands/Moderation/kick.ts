@@ -1,6 +1,7 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { GuildMember, MessageEmbed } from "discord.js";
+import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
+import { embedMod, sendLogChannel } from "../../utils";
 
 export class KickCommand extends ApplicationCommand {
   constructor(client: ShewenyClient) {
@@ -36,45 +37,42 @@ export class KickCommand extends ApplicationCommand {
     const member = interaction.options.getMember("user", true) as GuildMember;
     const reason =
       interaction.options.getString("reason", false) || "No reason was given";
-    if (!member) return interaction.replyErrorMessage(`User not found.`, true);
+    if (!member)
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} User not found`,
+        ephemeral: true,
+      });
+
     if (
       (interaction.member as GuildMember).roles.highest.comparePositionTo(
         member.roles.highest
-      ) <= 0 &&
-      interaction.guild!.ownerId !== interaction.user.id
+      ) <= 0
     )
-      return interaction.replyErrorMessage(`You don't have the permission for this.`, true);
-    const embed = new MessageEmbed()
-      .setAuthor(`${member.user.tag} (${member.id})`)
-      .setColor(this.client.colors.red)
-      .setDescription(
-        `**Action**: kick\n**Reason**: ${reason}\n**Guild**: ${interaction.guild!.name}`
-      )
-      .setThumbnail(
-        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-      )
-      .setTimestamp()
-      .setFooter(
-        interaction.user.username,
-        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-      );
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} You don't have the permission for this`,
+        ephemeral: true,
+      });
+
+    const embed = embedMod(
+      member,
+      interaction.user,
+      this.client.config.colors.red,
+      "kick",
+      { reason, guild: interaction.guild! }
+    );
     if (member.kickable) {
       try {
         await member.send({ embeds: [embed] });
       } finally {
         member.kick(reason).then(() => {
-          interaction.reply({ embeds: [embed], ephemeral: true });
-          const channel = this.client.util.resolveChannel(
-            interaction.guild,
-            this.client.config.channels.moderation_logs
-          );
-          if (
-            channel &&
-            channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES")
-          )
-            channel.send({ embeds: [embed] });
+          interaction.reply({ content: `${member.user.tag} is kicked`, ephemeral: true });
+          sendLogChannel(this.client, interaction, { embeds: [embed] });
         });
       }
-    }
+    } else
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} I can't kick this user`,
+        ephemeral: true,
+      });
   }
 }

@@ -1,5 +1,5 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed, TextChannel } from "discord.js";
+import { TextChannel } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class PurgeCommand extends ApplicationCommand {
@@ -55,28 +55,29 @@ export class PurgeCommand extends ApplicationCommand {
     switch (interaction.options.getSubcommand(false)) {
       case "messages":
         const channelTextMessages = interaction.channel! as TextChannel;
+        const argsNumberMessages = interaction.options.getNumber("number", true);
+
+        if (
+          isNaN(argsNumberMessages) ||
+          argsNumberMessages < 1 ||
+          argsNumberMessages > 100
+        )
+          return interaction.reply({
+            content: `${this.client.config.emojis.error} You must specify a number between 1 and 100.`,
+            ephemeral: true,
+          });
         const messagesToDelete = await channelTextMessages.messages.fetch({
-          limit: Math.min(interaction.options.getNumber("number", true), 100),
+          limit: Math.min(argsNumberMessages, 100),
           before: interaction.id,
         });
-        const embedMessages = new MessageEmbed()
-          .setAuthor(
-            interaction.user.username,
-            interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-          )
-          .setColor(this.client.colors.red)
-          .setDescription(
-            `**Action**: purge messages\n**Messages**: ${interaction.options.getNumber(
-              "number",
-              true
-            )}\n**Channel**: ${channelTextMessages.name}`
-          )
-          .setTimestamp()
-          .setFooter(`Executor : ${interaction.user.username}`);
+
         channelTextMessages
           .bulkDelete(messagesToDelete)
           .then(async () => {
-            await interaction.reply({ embeds: [embedMessages], ephemeral: true });
+            await interaction.reply({
+              content: `${messagesToDelete.size} messages have been deleted`,
+              ephemeral: true,
+            });
           })
           .catch((err: Error) => {
             if (
@@ -84,13 +85,17 @@ export class PurgeCommand extends ApplicationCommand {
                 "You can only bulk delete messages that are under 14 days old"
               )
             )
-              interaction.replyErrorMessage(
-                `You cannot delete messages older than 14 days.`,
-                true
-              );
-            else
-              interaction.replyErrorMessage(`An error occurred. Please try again.`, true);
-            console.error(err);
+              interaction.reply({
+                content: `${this.client.config.emojis.error} You cannot delete messages older than 14 days.`,
+                ephemeral: true,
+              });
+            else {
+              console.error(err);
+              interaction.reply({
+                content: `${this.client.config.emojis.error} An error occurred. Please try again.`,
+                ephemeral: true,
+              });
+            }
           });
         break;
       case "user":
@@ -98,10 +103,11 @@ export class PurgeCommand extends ApplicationCommand {
         const channelTextUser = interaction.channel as TextChannel;
         const user = interaction.options.getUser("user", true);
         if (isNaN(argNumber) || argNumber < 1 || argNumber > 100)
-          return interaction.replyErrorMessage(
-            `You must specify a number between 1 and 100.`,
-            true
-          );
+          return interaction.reply({
+            content: `${this.client.config.emojis.error} You must specify a number between 1 and 100.`,
+            ephemeral: true,
+          });
+
         const messagesOfUser: any = (
           await interaction.channel!.messages.fetch({
             limit: 100,
@@ -111,20 +117,14 @@ export class PurgeCommand extends ApplicationCommand {
 
         messagesOfUser.length = Math.min(argNumber, messagesOfUser.length);
         if (messagesOfUser.length === 0 || !user)
-          return interaction.replyErrorMessage(`No message to delete`, true);
+          return interaction.reply({ content: `No message to delete`, ephemeral: true });
         if (messagesOfUser.length === 1) await messagesOfUser[1].delete();
         else await channelTextUser.bulkDelete(messagesOfUser);
 
-        const embedLogs = new MessageEmbed()
-          .setAuthor(
-            interaction.user.username,
-            interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-          )
-          .setColor(this.client.colors.red)
-          .setDescription(
-            `**Action**: purge\n**Messages**: ${argNumber}\n**User**: ${user.tag}`
-          );
-        await interaction.reply({ embeds: [embedLogs], ephemeral: true });
+        await interaction.reply({
+          content: `${messagesOfUser.size} messages from ${user.tag} have been deleted`,
+          ephemeral: true,
+        });
         break;
     }
   }

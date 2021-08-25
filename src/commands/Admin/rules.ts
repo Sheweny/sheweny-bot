@@ -62,8 +62,11 @@ Server Invite: https://discord.gg/qgd85nEf5a
       .setFooter("Sheweny discord server rules");
 
     const channel = interaction.options.getChannel("channel", true) as TextChannel;
-    if (!channel) return interaction.replyErrorMessage("Channel not found");
-    await interaction.replySuccessMessage("Success");
+    if (!channel)
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} Channel not found`,
+      });
+    await interaction.reply({ content: `${this.client.config.emojis.success} Success` });
     const button = new MessageActionRow().addComponents(
       new MessageButton().setCustomId("ruleCheck").setLabel("Check").setStyle("SUCCESS")
     );

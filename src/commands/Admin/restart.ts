@@ -17,7 +17,7 @@ export class RestartCommand extends ApplicationCommand {
     );
   }
   async execute(interaction: CommandInteraction) {
-    await interaction.replySuccessMessage(`Success`);
+    await interaction.reply({ content: `${this.client.config.emojis.success} Success` });
     return process.exit();
   }
 }
