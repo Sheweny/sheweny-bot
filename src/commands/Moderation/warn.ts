@@ -1,6 +1,7 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { GuildMember, MessageEmbed } from "discord.js";
+import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
+import { embedMod, sendLogChannel } from "../../utils";
 
 export class WarnCommand extends ApplicationCommand {
   constructor(client: ShewenyClient) {
@@ -33,41 +34,34 @@ export class WarnCommand extends ApplicationCommand {
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user") as GuildMember;
-    if (!member) return interaction.replyErrorMessage("User not found.", true);
+    if (!member)
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} User not found.`,
+        ephemeral: true,
+      });
 
     const reason: string =
       interaction.options.getString("reason") || "No reason was provided.";
 
-    const dmEmbed = new MessageEmbed()
-      .setTitle("Warn")
-      .setColor(this.client.colors.orange)
-      .setAuthor(
-        member.user.tag,
-        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-      )
-      .setThumbnail(
-        member.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-      )
-      .setDescription(
-        `**Action :** Warn\n**Reason :** ${reason}${
-          reason.endsWith(".") ? "" : "."
-        }\n**Server :** ${interaction.guild!.name}\n**Moderator :** ${
-          interaction.user.tag
-        }`
-      )
-      .setTimestamp()
-      .setFooter(
-        `By : ${interaction.user.tag}`,
-        interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-      );
-    try {
-      await member.send({ embeds: [dmEmbed] });
-    } catch {
-      return interaction.replyErrorMessage("I can't send a message to this user.", true);
-    }
-    interaction.replySuccessMessage(
-      `I have successfully warn the user \`${member.user.tag}\`.`,
-      true
+    const embed = embedMod(
+      member,
+      interaction.user,
+      this.client.config.colors.orange,
+      "warn",
+      { reason }
     );
+    try {
+      await member.send({ embeds: [embed] });
+      sendLogChannel(this.client, interaction, { embeds: [embed] });
+    } catch {
+      return interaction.reply({
+        content: `${this.client.config.emojis.error} I can't send message to this user`,
+        ephemeral: true,
+      });
+    }
+    interaction.reply({
+      content: `I have successfully warn ${member.user.tag}`,
+      ephemeral: true,
+    });
   }
 }

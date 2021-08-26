@@ -6,44 +6,24 @@ import { DiscordResolve } from "@sheweny/resolve";
 import toml from "toml";
 import { IConfig } from "./interfaces/Config";
 
-declare module "discord.js" {
-  interface CommandInteraction {
-    replySuccessMessage(content: string, ephemeral?: boolean): any;
-    replyErrorMessage(content: string, ephemeral?: boolean): any;
-  }
-}
-
-CommandInteraction.prototype.replySuccessMessage = function (
-  content: string,
-  ephemeral?: boolean
-) {
-  return this.reply({
-    content: `${config.emojis.success} ${content}`,
-    ephemeral: ephemeral || false,
-  });
-};
-CommandInteraction.prototype.replyErrorMessage = function (
-  content: string,
-  ephemeral?: boolean
-) {
-  return this.reply({
-    content: `${config.emojis.error} ${content}`,
-    ephemeral: ephemeral || false,
-  });
-};
-
-const config: IConfig = toml.parse(
+const configToml = toml.parse(
   readFileSync(join(__dirname, "../config.toml")).toString()
 );
 
+declare module "sheweny" {
+  interface ShewenyClient {
+    config: IConfig;
+    util: DiscordResolve;
+  }
+}
+
 class Client extends ShewenyClient {
   public util: DiscordResolve;
-  readonly config = config;
-  readonly colors = config.colors;
+  readonly config: IConfig = configToml;
 
   constructor() {
     super({
-      admins: config.bot_admins,
+      admins: configToml.bot_admins,
       intents: ["GUILDS", "GUILD_MEMBERS"],
       partials: ["GUILD_MEMBER"],
       handlers: {
@@ -65,20 +45,28 @@ class Client extends ShewenyClient {
 
     this.util = new DiscordResolve(this);
 
-    this.handlers.applicationCommands!.on(
-      "cooldownLimit",
-      (interaction: CommandInteraction) => {
-        return interaction.reply({
-          content: "Please slow down",
-          ephemeral: true,
-        });
-      }
-    );
-  }
+    this.handlers
+      .applicationCommands!.on(
+        "cooldownLimit",
+        (interaction: CommandInteraction) => {
+          return interaction.reply({
+            content: "Please slow down",
+            ephemeral: true,
+          });
+        }
+      )
+      .on(
+        "userMissingPermissions",
+        (interaction: CommandInteraction, missing: string) => {
+          return interaction.reply({
+            content: `You don't have ${missing} permissions`,
+            ephemeral: true,
+          });
+        }
+      );
 
-  public initBot() {
     this.login(this.config.token);
   }
 }
 
-new Client().initBot();
+new Client();
