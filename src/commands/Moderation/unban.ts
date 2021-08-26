@@ -1,6 +1,7 @@
 import { ApplicationCommand, ShewenyClient } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { User } from "discord.js";
 import type { CommandInteraction } from "discord.js";
+import { embedMod, sendLogChannel } from "../../utils";
 
 export class UnbanCommand extends ApplicationCommand {
   constructor(client: ShewenyClient) {
@@ -28,41 +29,39 @@ export class UnbanCommand extends ApplicationCommand {
   }
   async execute(interaction: CommandInteraction) {
     try {
-      const user = await this.client.util.resolveUser(
-        interaction.options.getString("user")
+      const user = (await this.client.util.resolveUser(
+        interaction.options.getString("user", true)
+      )) as User;
+      if (!user)
+        return interaction.reply({
+          content: `${this.client.config.emojis.error} User not found.`,
+          ephemeral: true,
+        });
+
+      await interaction.guild!.members.unban(user);
+
+      const embed = embedMod(
+        user,
+        interaction.user,
+        this.client.config.colors.green,
+        "unban"
       );
-      if (!user) return interaction.replyErrorMessage(`User not found.`, true);
-      interaction.guild!.members.unban(user);
-      const embed = new MessageEmbed()
-        .setAuthor(
-          `${user.username} (${user.id})`,
-          user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-        )
-        .setColor(this.client.colors.red)
-        .setDescription(`**Action**: unban`)
-        .setTimestamp()
-        .setFooter(
-          interaction.user.username,
-          interaction.user.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-        );
       await interaction.reply({ embeds: [embed], ephemeral: true });
 
-      const channel = this.client.util.resolveChannel(
-        interaction.guild,
-        this.client.config.channels.moderation_logs
-      );
-      if (channel && channel.permissionsFor(interaction.guild!.me).has("SEND_MESSAGES"))
-        channel.send({ embeds: [embed] });
+      sendLogChannel(this.client, interaction, { embeds: [embed] });
     } catch (e: any) {
       console.log(e);
 
       if (e.message.match("Unknown User"))
-        return interaction.replyErrorMessage(`User not found.`, true);
+        return interaction.reply({
+          content: `${this.client.config.emojis.error} User not found.`,
+          ephemeral: true,
+        });
       else
-        return interaction.replyErrorMessage(
-          `An error has occurred. Please try again.`,
-          true
-        );
+        return interaction.reply({
+          content: `${this.client.config.emojis.error} An error has occurred. Please try again.`,
+          ephemeral: true,
+        });
     }
   }
 }
