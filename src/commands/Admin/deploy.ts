@@ -1,21 +1,16 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { exec } from "child_process";
 import type { CommandInteraction } from "discord.js";
 
-export class PullCommand extends ApplicationCommand {
+export class PullCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "deploy",
-        description: "Deploy new version of bot",
-        type: "CHAT_INPUT",
-      },
-      {
-        category: "Admin",
-        userPermissions: ["BOT_ADMIN"],
-      }
-    );
+    super(client, {
+      name: "deploy",
+      description: "Deploy new version of bot",
+      type: "SLASH_COMMAND",
+      category: "Admin",
+      adminsOnly: true,
+    });
   }
   async execute(interaction: CommandInteraction) {
     let error = false;
@@ -125,7 +120,7 @@ export class PullCommand extends ApplicationCommand {
     async function execBotCommand(cmd: any, client: ShewenyClient) {
       if (cmd.name === "Delete commands") {
         await client.handlers
-          .applicationCommands!.deleteAllCommands("877090306103840778")
+          .commands!.deleteAllCommands("877090306103840778")
           .then(async () => {
             await outputSuccess(cmd.name);
           })

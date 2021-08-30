@@ -1,61 +1,59 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { TextChannel } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
-export class PurgeCommand extends ApplicationCommand {
+export class PurgeCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "purge",
-        description: "Purge messages",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "messages",
-            description: "Delete messages in a channel.",
-            type: "SUB_COMMAND",
-            options: [
-              {
-                name: "number",
-                description: "Number of messages",
-                type: "NUMBER",
-                required: true,
-              },
-            ],
-          },
-          {
-            name: "user",
-            description: "Purge messages from single user.",
-            type: "SUB_COMMAND",
-            options: [
-              {
-                name: "user",
-                description: "User",
-                type: "USER",
-                required: true,
-              },
-              {
-                name: "number",
-                description: "Number of messages",
-                type: "NUMBER",
-                required: true,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["MANAGE_MESSAGES"],
-      }
-    );
+    super(client, {
+      name: "purge",
+      description: "Purge messages",
+      type: "SLASH_COMMAND",
+      category: "Moderation",
+      options: [
+        {
+          name: "messages",
+          description: "Delete messages in a channel.",
+          type: "SUB_COMMAND",
+          options: [
+            {
+              name: "number",
+              description: "Number of messages",
+              type: "NUMBER",
+              required: true,
+            },
+          ],
+        },
+        {
+          name: "user",
+          description: "Purge messages from single user.",
+          type: "SUB_COMMAND",
+          options: [
+            {
+              name: "user",
+              description: "User",
+              type: "USER",
+              required: true,
+            },
+            {
+              name: "number",
+              description: "Number of messages",
+              type: "NUMBER",
+              required: true,
+            },
+          ],
+        },
+      ],
+      userPermissions: ["MANAGE_MESSAGES"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     switch (interaction.options.getSubcommand(false)) {
       case "messages":
         const channelTextMessages = interaction.channel! as TextChannel;
-        const argsNumberMessages = interaction.options.getNumber("number", true);
+        const argsNumberMessages = interaction.options.getNumber(
+          "number",
+          true
+        );
 
         if (
           isNaN(argsNumberMessages) ||
@@ -117,7 +115,10 @@ export class PurgeCommand extends ApplicationCommand {
 
         messagesOfUser.length = Math.min(argNumber, messagesOfUser.length);
         if (messagesOfUser.length === 0 || !user)
-          return interaction.reply({ content: `No message to delete`, ephemeral: true });
+          return interaction.reply({
+            content: `No message to delete`,
+            ephemeral: true,
+          });
         if (messagesOfUser.length === 1) await messagesOfUser[1].delete();
         else await channelTextUser.bulkDelete(messagesOfUser);
 

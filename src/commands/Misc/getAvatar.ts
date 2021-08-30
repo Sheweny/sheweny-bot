@@ -1,21 +1,16 @@
-import { ApplicationCommand } from "sheweny";
+import { Command } from "sheweny";
 import type { ShewenyClient } from "sheweny";
 import type { ContextMenuInteraction } from "discord.js";
 
-export class GetAvatar extends ApplicationCommand {
+export class GetAvatar extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "getAvatar",
-        type: "USER",
-      },
-      {
-        category: "Misc",
-        description: "Get avatar of user",
-        cooldown: 10,
-      }
-    );
+    super(client, {
+      name: "display-avatar",
+      type: "CONTEXT_MENU_USER",
+      category: "Misc",
+      description: "Get avatar of user",
+      cooldown: 10,
+    });
   }
 
   execute(interaction: ContextMenuInteraction) {

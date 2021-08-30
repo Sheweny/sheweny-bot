@@ -26,8 +26,9 @@ class Client extends ShewenyClient {
       admins: configToml.bot_admins,
       intents: ["GUILDS", "GUILD_MEMBERS"],
       partials: ["GUILD_MEMBER"],
+      mode: "development",
       handlers: {
-        applicationCommands: {
+        commands: {
           directory: "./commands",
           guildId: "877090306103840778",
         },
@@ -46,15 +47,12 @@ class Client extends ShewenyClient {
     this.util = new DiscordResolve(this);
 
     this.handlers
-      .applicationCommands!.on(
-        "cooldownLimit",
-        (interaction: CommandInteraction) => {
-          return interaction.reply({
-            content: "Please slow down",
-            ephemeral: true,
-          });
-        }
-      )
+      .commands!.on("cooldownLimit", (interaction: CommandInteraction) => {
+        return interaction.reply({
+          content: "Please slow down",
+          ephemeral: true,
+        });
+      })
       .on(
         "userMissingPermissions",
         (interaction: CommandInteraction, missing: string) => {
@@ -64,7 +62,6 @@ class Client extends ShewenyClient {
           });
         }
       );
-
     this.login(this.config.token);
   }
 }
