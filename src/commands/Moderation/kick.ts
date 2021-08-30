@@ -1,37 +1,32 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
-export class KickCommand extends ApplicationCommand {
+export class KickCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "kick",
-        description: "Kick member from the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "user",
-            type: "USER",
-            description: "The user to kick",
-            required: true,
-          },
-          {
-            name: "reason",
-            description: "The reason of kick",
-            type: "STRING",
-            required: false,
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["KICK_MEMBERS"],
-        clientPermissions: ["KICK_MEMBERS"],
-      }
-    );
+    super(client, {
+      name: "kick",
+      description: "Kick member from the guild",
+      type: "SLASH_COMMAND",
+      category: "Moderation",
+      options: [
+        {
+          name: "user",
+          type: "USER",
+          description: "The user to kick",
+          required: true,
+        },
+        {
+          name: "reason",
+          description: "The reason of kick",
+          type: "STRING",
+          required: false,
+        },
+      ],
+      userPermissions: ["KICK_MEMBERS"],
+      clientPermissions: ["KICK_MEMBERS"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user", true) as GuildMember;
@@ -65,7 +60,10 @@ export class KickCommand extends ApplicationCommand {
         await member.send({ embeds: [embed] });
       } finally {
         member.kick(reason).then(() => {
-          interaction.reply({ content: `${member.user.tag} is kicked`, ephemeral: true });
+          interaction.reply({
+            content: `${member.user.tag} is kicked`,
+            ephemeral: true,
+          });
           sendLogChannel(this.client, interaction, { embeds: [embed] });
         });
       }

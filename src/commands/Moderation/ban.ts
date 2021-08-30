@@ -1,41 +1,37 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
-export class BanCommand extends ApplicationCommand {
+export class BanCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "ban",
-        description: "Ban member from the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "user",
-            type: "USER",
-            description: "The user to ban",
-            required: true,
-          },
-          {
-            name: "reason",
-            description: "The reason of ban",
-            type: "STRING",
-            required: false,
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["BAN_MEMBERS"],
-        clientPermissions: ["BAN_MEMBERS"],
-      }
-    );
+    super(client, {
+      name: "ban",
+      description: "Ban member from the guild",
+      type: "SLASH_COMMAND",
+      category: "Moderation",
+      options: [
+        {
+          name: "user",
+          type: "USER",
+          description: "The user to ban",
+          required: true,
+        },
+        {
+          name: "reason",
+          description: "The reason of ban",
+          type: "STRING",
+          required: false,
+        },
+      ],
+      userPermissions: ["BAN_MEMBERS"],
+      clientPermissions: ["BAN_MEMBERS"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     const reason =
-      interaction.options.getString("reason", false) || "No reason was provided.";
+      interaction.options.getString("reason", false) ||
+      "No reason was provided.";
     const member = interaction.options.getMember("user", true) as GuildMember;
     if (!member)
       return interaction.reply({

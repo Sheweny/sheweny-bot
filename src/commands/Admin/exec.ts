@@ -1,29 +1,24 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { exec } from "child_process";
 import type { CommandInteraction } from "discord.js";
 
-export class ExecCommand extends ApplicationCommand {
+export class ExecCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "exec",
-        description: "Exec a command in terminal",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "command",
-            type: "STRING",
-            description: "The command to execute",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Admin",
-        userPermissions: ["BOT_ADMIN"],
-      }
-    );
+    super(client, {
+      name: "exec",
+      description: "Exec a command in terminal",
+      type: "SLASH_COMMAND",
+      category: "Admin",
+      options: [
+        {
+          name: "command",
+          type: "STRING",
+          description: "The command to execute",
+          required: true,
+        },
+      ],
+      adminsOnly: true,
+    });
   }
 
   async execute(interaction: CommandInteraction) {
@@ -47,7 +42,9 @@ export class ExecCommand extends ApplicationCommand {
       `${this.client.config.emojis.loading} Executing \`${command}\`...`
     );
 
-    let stdOut = await doExec(command).catch(async (data) => await outputErr(data));
+    let stdOut = await doExec(command).catch(
+      async (data) => await outputErr(data)
+    );
     return interaction.editReply(`\`\`\`bash\n${stdOut.toString()}\n\`\`\``);
   }
 }

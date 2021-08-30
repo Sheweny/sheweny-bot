@@ -1,30 +1,25 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
-export class UnmuteCommand extends ApplicationCommand {
+export class UnmuteCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "unmute",
-        description: "Unmute user in the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "user",
-            type: "USER",
-            description: "The user to unmute",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["MANAGE_MEMBERS"],
-      }
-    );
+    super(client, {
+      name: "unmute",
+      description: "Unmute user in the guild",
+      type: "SLASH_COMMAND",
+      category: "Moderation",
+      options: [
+        {
+          name: "user",
+          type: "USER",
+          description: "The user to unmute",
+          required: true,
+        },
+      ],
+      userPermissions: ["BAN_MEMBERS"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user") as GuildMember;
@@ -34,7 +29,9 @@ export class UnmuteCommand extends ApplicationCommand {
         ephemeral: true,
       });
 
-    const muteRole = interaction.guild!.roles.cache.find((r) => r.name === "Muted");
+    const muteRole = interaction.guild!.roles.cache.find(
+      (r) => r.name === "Muted"
+    );
     if (!muteRole)
       return interaction.reply({
         content: `${this.client.config.emojis.error} No mute role.`,

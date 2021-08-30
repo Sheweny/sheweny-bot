@@ -1,4 +1,4 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import {
   CommandInteraction,
   MessageActionRow,
@@ -7,28 +7,23 @@ import {
   TextChannel,
 } from "discord.js";
 
-export class RestartCommand extends ApplicationCommand {
+export class RestartCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "rules",
-        description: "Display the rules of the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "channel",
-            description: "Channel to send the rules",
-            type: "CHANNEL",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Admin",
-        userPermissions: ["BOT_ADMIN"],
-      }
-    );
+    super(client, {
+      name: "rules",
+      description: "Display the rules of the guild",
+      type: "SLASH_COMMAND",
+      category: "Admin",
+      options: [
+        {
+          name: "channel",
+          description: "Channel to send the rules",
+          type: "CHANNEL",
+          required: true,
+        },
+      ],
+      adminsOnly: true,
+    });
   }
   async execute(interaction: CommandInteraction) {
     const embed = new MessageEmbed()
@@ -61,14 +56,22 @@ Server Invite: https://discord.gg/qgd85nEf5a
       .setTimestamp()
       .setFooter("Sheweny discord server rules");
 
-    const channel = interaction.options.getChannel("channel", true) as TextChannel;
+    const channel = interaction.options.getChannel(
+      "channel",
+      true
+    ) as TextChannel;
     if (!channel)
       return interaction.reply({
         content: `${this.client.config.emojis.error} Channel not found`,
       });
-    await interaction.reply({ content: `${this.client.config.emojis.success} Success` });
+    await interaction.reply({
+      content: `${this.client.config.emojis.success} Success`,
+    });
     const button = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId("ruleCheck").setLabel("Check").setStyle("SUCCESS")
+      new MessageButton()
+        .setCustomId("ruleCheck")
+        .setLabel("Check")
+        .setStyle("SUCCESS")
     );
     channel.send({ embeds: [embed], components: [button] });
   }

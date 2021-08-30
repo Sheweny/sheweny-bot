@@ -1,29 +1,24 @@
 import util from "util";
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import type { CommandInteraction } from "discord.js";
 
-export class EvalCommand extends ApplicationCommand {
+export class EvalCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "eval",
-        description: "Eval a javascript code",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "code",
-            description: "The code to eval",
-            type: "STRING",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Admin",
-        userPermissions: ["BOT_ADMIN"],
-      }
-    );
+    super(client, {
+      name: "eval",
+      description: "Eval a javascript code",
+      type: "SLASH_COMMAND",
+      category: "Admin",
+      options: [
+        {
+          name: "code",
+          description: "The code to eval",
+          type: "STRING",
+          required: true,
+        },
+      ],
+      adminsOnly: true,
+    });
   }
   async execute(interaction: CommandInteraction) {
     let evaled: string = interaction.options.getString("code", true);

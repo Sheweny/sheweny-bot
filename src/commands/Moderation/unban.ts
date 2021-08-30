@@ -1,31 +1,26 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { User } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
-export class UnbanCommand extends ApplicationCommand {
+export class UnbanCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "unban",
-        description: "Unban user in the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "user",
-            type: "STRING",
-            description: "The user to unban",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["BAN_MEMBERS"],
-        clientPermissions: ["MANAGE_MEMBERS"],
-      }
-    );
+    super(client, {
+      name: "unban",
+      description: "Unban user in the guild",
+      type: "SLASH_COMMAND",
+      category: "Moderation",
+      options: [
+        {
+          name: "user",
+          type: "STRING",
+          description: "The user to unban",
+          required: true,
+        },
+      ],
+      userPermissions: ["MANAGE_GUILD"],
+      clientPermissions: ["BAN_MEMBERS"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     try {

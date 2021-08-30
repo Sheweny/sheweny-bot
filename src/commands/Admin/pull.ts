@@ -1,29 +1,24 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { exec } from "child_process";
 import type { CommandInteraction } from "discord.js";
 
-export class PullCommand extends ApplicationCommand {
+export class PullCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "pull",
-        description: "Pull the code of bot in github repo",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "branch",
-            type: "STRING",
-            description: "The branch to pull",
-            required: true,
-          },
-        ],
-      },
-      {
-        category: "Admin",
-        userPermissions: ["BOT_ADMIN"],
-      }
-    );
+    super(client, {
+      name: "pull",
+      description: "Pull the code of bot in github repo",
+      type: "SLASH_COMMAND",
+      category: "Admin",
+      options: [
+        {
+          name: "branch",
+          type: "STRING",
+          description: "The branch to pull",
+          required: true,
+        },
+      ],
+      adminsOnly: true,
+    });
   }
   async execute(interaction: CommandInteraction) {
     const outputErr = async (stdData: any) => {

@@ -1,36 +1,31 @@
-import { ApplicationCommand, ShewenyClient } from "sheweny";
+import { Command, ShewenyClient } from "sheweny";
 import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
-export class WarnCommand extends ApplicationCommand {
+export class WarnCommand extends Command {
   constructor(client: ShewenyClient) {
-    super(
-      client,
-      {
-        name: "warn",
-        description: "Warn member of the guild",
-        type: "CHAT_INPUT",
-        options: [
-          {
-            name: "user",
-            type: "USER",
-            description: "The user to warn",
-            required: true,
-          },
-          {
-            name: "reason",
-            description: "The reason of warn",
-            type: "STRING",
-            required: false,
-          },
-        ],
-      },
-      {
-        category: "Moderation",
-        userPermissions: ["MANAGE_MEMBERS"],
-      }
-    );
+    super(client, {
+      name: "warn",
+      description: "Warn member of the guild",
+      category: "Moderation",
+      type: "SLASH_COMMAND",
+      options: [
+        {
+          name: "user",
+          type: "USER",
+          description: "The user to warn",
+          required: true,
+        },
+        {
+          name: "reason",
+          description: "The reason of warn",
+          type: "STRING",
+          required: false,
+        },
+      ],
+      userPermissions: ["BAN_MEMBERS"],
+    });
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user") as GuildMember;
