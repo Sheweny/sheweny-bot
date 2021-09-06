@@ -19,7 +19,7 @@ export class PullCommand extends Command {
         name: "Pull",
         command: "git pull origin main",
         type: "shell",
-        status: "progress",
+        status: "queuded",
         error: "",
       },
       {
