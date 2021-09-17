@@ -1,6 +1,6 @@
 # Sheweny bot
 
-![sheweny](https://cdn.discordapp.com/attachments/877217860408209449/879781364742893598/20210824_191118_0000__01.png)
+![sheweny](https://media.discordapp.net/attachments/881988260925153322/882027519753224244/sheweny_baniere.png) 
 
 <div align="center">
 
