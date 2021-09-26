@@ -19,8 +19,9 @@ A bot using sheweny framework for official discord server.
 1. Clone the repo
 2. Clone `config.template.toml` nto the main directory and rename it to `config.toml`
 3. Install the dependencies: `npm install`
-4. Compile typescript : `npm run build`
-5. Start the bot: `npm run start`
+4. Change the data like `guildId` in code
+5. Compile typescript : `npm run build`
+6. Start the bot: `npm run start`
 
 ## Contributions/Licence
 
