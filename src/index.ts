@@ -30,7 +30,7 @@ class Client extends ShewenyClient {
       handlers: {
         commands: {
           directory: "./commands",
-          guildId: "877090306103840778",
+          guildId: "877090306103840778", // Change with id of your guild or remote it
         },
         events: {
           directory: "./events",
