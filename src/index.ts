@@ -24,6 +24,16 @@ class Client extends ShewenyClient {
       intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
       partials: ["GUILD_MEMBER"],
       mode: "development",
+      joinThreadsOnCreate: true,
+      presence: {
+        status: "online",
+        activities: [
+          {
+            name: "Sheweny 3.0.0",
+            type: "WATCHING",
+          },
+        ],
+      },
       managers: {
         commands: {
           directory: "./commands",
