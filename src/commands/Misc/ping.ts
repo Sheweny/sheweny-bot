@@ -1,7 +1,6 @@
 import { Command } from "sheweny";
 import type { ShewenyClient } from "sheweny";
-import type { CommandInteraction } from "discord.js";
-
+import { CommandInteraction } from "discord.js";
 export class PingCommand extends Command {
   constructor(client: ShewenyClient) {
     super(client, {
@@ -12,7 +11,7 @@ export class PingCommand extends Command {
     });
   }
 
-  execute(interaction: CommandInteraction) {
-    return interaction.reply("Pong !");
+  async execute(interaction: CommandInteraction) {
+    interaction.reply({ content: "Pong!" });
   }
 }

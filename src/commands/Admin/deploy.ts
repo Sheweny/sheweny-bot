@@ -119,7 +119,7 @@ export class PullCommand extends Command {
     }
     async function execBotCommand(cmd: any, client: ShewenyClient) {
       if (cmd.name === "Delete commands") {
-        await client.handlers
+        await client.managers
           .commands!.deleteAllCommands("877090306103840778")
           .then(async () => {
             await outputSuccess(cmd.name);
