@@ -11,5 +11,5 @@ moderation_logs = "877472410943782932"
 
 [colors] # The colors for embeds
 red= "#ff0004"
-orange= "ff8400"
+orange= "#ff8400"
 green= "#02ff30"
