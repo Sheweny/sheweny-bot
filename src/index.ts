@@ -8,6 +8,9 @@ import { IConfig } from "./interfaces/Config";
 const configToml = toml.parse(
   readFileSync(join(__dirname, "../config.toml")).toString()
 );
+const packageInfos = readFileSync(
+  join(__dirname, "../package.json")
+).toString();
 
 declare module "sheweny" {
   interface ShewenyClient {
@@ -29,7 +32,9 @@ class Client extends ShewenyClient {
         status: "online",
         activities: [
           {
-            name: "Sheweny 3.0.0",
+            name: `Sheweny ${
+              JSON.parse(packageInfos).dependencies.sheweny.split("^")[1]
+            }`,
             type: "WATCHING",
           },
         ],
@@ -70,9 +75,7 @@ class Client extends ShewenyClient {
           });
         }
       );
-    this.login(this.config.token).then(() => {
-      console.log(this.collections.commands);
-    });
+    this.login(this.config.token);
   }
 }
 
