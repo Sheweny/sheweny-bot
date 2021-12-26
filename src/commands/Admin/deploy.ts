@@ -23,8 +23,8 @@ export class PullCommand extends Command {
         error: "",
       },
       {
-        name: "Npm install",
-        command: "npm install",
+        name: "yarn",
+        command: "yarn",
         type: "shell",
         status: "queuded",
         error: "",
