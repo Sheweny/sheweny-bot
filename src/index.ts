@@ -44,6 +44,9 @@ class Client extends ShewenyClient {
           directory: "./commands",
           guildId: "877090306103840778", // Change with id of your guild or remote it
           prefix: "!",
+          default: {
+            cooldown: 10
+          }
         },
         events: {
           directory: "./events",
