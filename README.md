@@ -1,5 +1,7 @@
 # Sheweny bot
 
+This bot use Sheweny 3.2.0
+
 ![sheweny_banear](https://media.discordapp.net/attachments/881988260925153322/882027519753224244/sheweny_baniere.png) 
 
 <div align="center">
