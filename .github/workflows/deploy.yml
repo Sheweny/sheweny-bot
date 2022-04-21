@@ -13,4 +13,4 @@ jobs:
           git pull origin main
           yarn
           yarn build
-          BOT_TOKEN={{secrets.BOT_TOKEN}} NODE_ENV=production pm2 reload ecosystem.config.js --update-env
+          BOT_TOKEN=${{secrets.BOT_TOKEN}} NODE_ENV=production pm2 reload ecosystem.config.js --update-env
