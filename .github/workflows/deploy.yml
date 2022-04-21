@@ -10,6 +10,7 @@ jobs:
         run: |
           cd /home/smaug/discord_bots/sheweny-bot/
           git remote -v
+          ssh -T git@github.com-sheweny-bot
           git stash
           git pull origin main
           yarn
