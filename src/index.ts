@@ -4,6 +4,8 @@ import type { CommandInteraction, Message } from "discord.js";
 import { ShewenyClient } from "sheweny";
 import toml from "toml";
 import { IConfig } from "./interfaces/Config";
+import dotenv from "dotenv";
+dotenv.config();
 
 const configToml = toml.parse(
   readFileSync(join(__dirname, "../config.toml")).toString()
@@ -75,7 +77,7 @@ class Client extends ShewenyClient {
           });
         }
       );
-    this.login(this.config.token);
+    this.login(process.env.BOT_TOKEN);
   }
 }
 
