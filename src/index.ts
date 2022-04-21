@@ -77,7 +77,7 @@ class Client extends ShewenyClient {
           });
         }
       );
-    console.log(process.env);
+    console.log(process.env.BOT_TOKEN);
 
     this.login(process.env.BOT_TOKEN);
   }
