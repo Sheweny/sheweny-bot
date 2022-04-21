@@ -13,4 +13,4 @@ jobs:
           git pull origin main
           yarn
           yarn build
-          BOT_TOKEN={{secrets.BOT_TOKEN}} pm2 reload ecosystem.config.js
+          BOT_TOKEN={{secrets.BOT_TOKEN}} pm2 reload ecosystem.config.js --update-env
