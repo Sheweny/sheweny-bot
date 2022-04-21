@@ -1,0 +1,16 @@
+name: Deploy to production
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy to production
+        run: |
+          cd /home/smaug/discord_bots/sheweny-bot/
+          git stash
+          git pull origin main
+          yarn
+          yarn build
+          pm2 reload ecosystem.config.js
