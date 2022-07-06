@@ -34,16 +34,15 @@ export function embedMod(
   options?: {
     reason?: string;
     guild?: Guild;
-    time?: string;
+    time?: number;
     messages?: number;
   }
 ) {
   let description = `**Action**: ${action}`;
   if (options?.reason) description += `\n**Reason**: ${options.reason}`;
   if (options?.time)
-    description += `\n**Time**: ${
-      options.time !== "ever" ? ms(ms(options.time)) : "ever"
-    }`;
+    description += `\n**Time**: ${formatTime(options?.time)}`
+      ;
   if (options?.messages) description += `\n**Messages**: ${options.messages} messages`;
   if (options?.guild) description += `\n**Guild**: ${options.guild.name}`;
 
@@ -65,4 +64,11 @@ export function embedMod(
   }
 
   return embed;
+}
+
+export function formatTime(time: number): string {
+  if (time < 3600) return `${time / 60} minutes(s)`
+  if (time < 86400) return `${time / 3600} hour(s)`
+  if (time < 604800) return `${time / 86400} day(s)`
+  return `${time / 604800} week(s)`
 }
