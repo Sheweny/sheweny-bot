@@ -1,8 +1,7 @@
 import { Command, ShewenyClient } from "sheweny";
-import { GuildMember } from "discord.js";
-import ms from "ms";
+import { GuildMember, } from "discord.js";
 import type { CommandInteraction } from "discord.js";
-import { embedMod, sendLogChannel } from "../../utils";
+import { embedMod, sendLogChannel, formatTime } from "../../utils";
 
 export class MuteCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -20,9 +19,33 @@ export class MuteCommand extends Command {
         },
         {
           name: "time",
+          type: "INTEGER",
           description: "The time of mute",
-          type: "STRING",
-          required: false,
+          choices: [{
+            name: "60 secondes",
+            value: 60
+          },
+          {
+            name: "5 mins",
+            value: 5 * 60
+          },
+          {
+            name: "10 mins",
+            value: 10 * 60
+          },
+          {
+            name: "1 hour",
+            value: 60 * 60
+          },
+          {
+            name: "1 day",
+            value: 24 * 60 * 60
+          },
+          {
+            name: "1 week",
+            value: 7 * 24 * 60 * 60
+          }],
+          required: true,
         },
         {
           name: "reason",
@@ -31,61 +54,43 @@ export class MuteCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["KICK_MEMBERS"],
-      clientPermissions: ["KICK_MEMBERS"],
+      userPermissions: ["MODERATE_MEMBERS"],
+      clientPermissions: ["MODERATE_MEMBERS"],
     });
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user", true) as GuildMember;
-    const muteTime = interaction.options.getString("time", false);
+    const muteTime = interaction.options.getInteger("time", true);
     const reason =
       interaction.options.getString("reason", false) || "No reason was given";
 
-    let muteRole = interaction.guild!.roles.cache.find(
-      (r) => r.name === "Muted"
-    );
     if (!member)
       return interaction.reply({
         content: `${this.client.config.emojis.error} User not found`,
         ephemeral: true,
       });
 
-    if (!muteRole) {
-      muteRole = await interaction.guild!.roles.create({
-        name: "Muted",
-        color: "#2f3136",
-        permissions: [],
-      });
-      interaction.guild!.channels.cache.forEach(async (channel) => {
-        if (channel.isThread()) return;
-        await channel.permissionOverwrites.edit(muteRole!, {
-          SEND_MESSAGES: false,
-          ADD_REACTIONS: false,
-          CONNECT: false,
-        });
-      });
+    if (member === interaction.member) {
+      return interaction.reply({ content: "You cannot use this command on yourself", ephemeral: true })
     }
+
+    member.timeout(muteTime, reason)
 
     const embed = embedMod(
       member,
       interaction.user,
       this.client.config.colors.red,
       "mute",
-      { reason, guild: interaction.guild!, time: muteTime ? muteTime : "ever" }
+      { reason, guild: interaction.guild!, time: muteTime }
     );
 
-    await member.roles.add(muteRole.id);
     interaction.reply({
-      content: `${this.client.config.emojis.success} <@${
-        member.id
-      }> is muted for ${muteTime ? ms(ms(muteTime)) : "ever"}.`,
+      content: `${this.client.config.emojis.success} <@${member.id
+        }> is muted for ${formatTime(muteTime)}.`,
       ephemeral: true,
     });
 
-    if (muteTime)
-      setTimeout(() => {
-        member.roles.remove(muteRole!.id);
-      }, ms(muteTime));
+
     sendLogChannel(this.client, interaction, { embeds: [embed] });
   }
 }
