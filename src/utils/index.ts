@@ -10,7 +10,6 @@ import {
   TextChannel,
   User,
 } from "discord.js";
-import ms from "ms";
 import type { ShewenyClient } from "sheweny";
 
 export function sendLogChannel(
