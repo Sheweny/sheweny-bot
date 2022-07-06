@@ -37,7 +37,7 @@ export class UnmuteCommand extends Command {
       });
 
     if (!member.isCommunicationDisabled()) {
-      return interaction.reply({ content: "// TODO : add message error", ephemeral: true })
+      return interaction.reply({ content: "This user is not muted", ephemeral: true })
     }
     member.timeout(null, reason)
     await interaction.reply({
