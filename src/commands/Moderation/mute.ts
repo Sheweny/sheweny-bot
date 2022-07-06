@@ -54,8 +54,8 @@ export class MuteCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["KICK_MEMBERS"],
-      clientPermissions: ["KICK_MEMBERS"],
+      userPermissions: ["MODERATE_MEMBERS"],
+      clientPermissions: ["MODERATE_MEMBERS"],
     });
   }
   async execute(interaction: CommandInteraction) {
@@ -71,11 +71,7 @@ export class MuteCommand extends Command {
       });
 
     if (member === interaction.member) {
-      return interaction.reply({ content: "// TODO : add error message", ephemeral: true })
-    }
-
-    if (member.permissions.has("MODERATE_MEMBERS")) {
-      return interaction.reply({ content: "// TODO : add error message", ephemeral: true })
+      return interaction.reply({ content: "You cannot use this command on yourself", ephemeral: true })
     }
 
     member.timeout(muteTime, reason)
