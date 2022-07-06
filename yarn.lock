@@ -396,10 +396,10 @@ rimraf@^2.6.1:
   dependencies:
     glob "^7.1.3"
 
-sheweny@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/sheweny/-/sheweny-3.3.2.tgz#235571df285344a8823aa05c125db3dc588be195"
-  integrity sha512-K0JlT+0AQaeyE8t8GmrcQ0V4nedAVUDf3w9QWfNzY+mjV7I56NRMyGHXtnn6l6Mp4ZxVLm7lJlZOYx5VQp8Lxg==
+sheweny@^3.4.1:
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/sheweny/-/sheweny-3.4.3.tgz#0143b54323ff7111d43cbe022f3a149c8cdc63b9"
+  integrity sha512-ZVFfeJZCB8u+F8ebVWU7r4YF9Md3GhJiIOSNjQ3O9/EVGg4Vx+LoDW0+kFvuEa826c/dcSDETB7DExLdmDWL1Q==
   dependencies:
     "@sheweny/resolve" "^1.3.2"
 
