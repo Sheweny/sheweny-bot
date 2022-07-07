@@ -65,9 +65,10 @@ export function embedMod(
   return embed;
 }
 
+// Time in milleseconds
 export function formatTime(time: number): string {
-  if (time < 3600) return `${time / 60} minutes(s)`
-  if (time < 86400) return `${time / 3600} hour(s)`
-  if (time < 604800) return `${time / 86400} day(s)`
-  return `${time / 604800} week(s)`
+  if (time < 3600 * 1000) return `${time / 60} minutes(s)`
+  if (time < 86400 * 1000) return `${time / 3600} hour(s)`
+  if (time < 604800 * 1000) return `${time / 86400} day(s)`
+  return `${time / 604800 * 1000} week(s)`
 }
