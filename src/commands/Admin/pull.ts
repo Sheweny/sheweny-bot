@@ -38,7 +38,7 @@ export class PullCommand extends Command {
 
     const command = interaction.options.getString("branch", true);
     await interaction.reply(
-      `${this.client.config.emojis.loading} Executing \`git pull origin ${command}\`...`
+      `${this.client.config.EMOTES.LOADING} Executing \`git pull origin ${command}\`...`
     );
 
     let stdOut = await doExec(`git pull origin ${command}`).catch((data) =>
