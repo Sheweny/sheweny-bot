@@ -19,7 +19,7 @@ export function sendLogChannel(
 ) {
   const channel = client.util.resolveChannel(
     interaction.guild!,
-    client.config.channels.moderation_logs
+    client.config.CHANNELS.LOGS
   ) as TextChannel;
   if (
     channel &&

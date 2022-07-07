@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { GuildMember, } from "discord.js";
+import { GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel, formatTime } from "../../utils";
 
@@ -21,30 +21,32 @@ export class MuteCommand extends Command {
           name: "time",
           type: "INTEGER",
           description: "The time of mute",
-          choices: [{
-            name: "60 secondes",
-            value: 1000 * 60
-          },
-          {
-            name: "5 mins",
-            value: 1000 * 5 * 60
-          },
-          {
-            name: "10 mins",
-            value: 1000 * 10 * 60
-          },
-          {
-            name: "1 hour",
-            value: 1000 * 60 * 60
-          },
-          {
-            name: "1 day",
-            value: 1000 * 24 * 60 * 60
-          },
-          {
-            name: "1 week",
-            value: 1000 * 7 * 24 * 60 * 60
-          }],
+          choices: [
+            {
+              name: "60 secondes",
+              value: 1000 * 60,
+            },
+            {
+              name: "5 mins",
+              value: 1000 * 5 * 60,
+            },
+            {
+              name: "10 mins",
+              value: 1000 * 10 * 60,
+            },
+            {
+              name: "1 hour",
+              value: 1000 * 60 * 60,
+            },
+            {
+              name: "1 day",
+              value: 1000 * 24 * 60 * 60,
+            },
+            {
+              name: "1 week",
+              value: 1000 * 7 * 24 * 60 * 60,
+            },
+          ],
           required: true,
         },
         {
@@ -66,30 +68,32 @@ export class MuteCommand extends Command {
 
     if (!member)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} User not found`,
+        content: `${this.client.config.EMOTES.ERROR} User not found`,
         ephemeral: true,
       });
 
     if (member === interaction.member) {
-      return interaction.reply({ content: "You cannot use this command on yourself", ephemeral: true })
+      return interaction.reply({
+        content: "You cannot use this command on yourself",
+        ephemeral: true,
+      });
     }
 
-    member.timeout(muteTime, reason)
+    member.timeout(muteTime, reason);
 
     const embed = embedMod(
       member,
       interaction.user,
-      this.client.config.colors.red,
+      this.client.config.COLORS.RED,
       "mute",
       { reason, guild: interaction.guild!, time: muteTime }
     );
-
     interaction.reply({
-      content: `${this.client.config.emojis.success} <@${member.id
-        }> is muted for ${formatTime(muteTime)}.`,
+      content: `${this.client.config.EMOTES.SUCCESS} <@${
+        member.id
+      }> is muted for ${formatTime(muteTime)}.`,
       ephemeral: true,
     });
-
 
     sendLogChannel(this.client, interaction, { embeds: [embed] });
   }

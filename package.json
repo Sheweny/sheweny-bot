@@ -27,8 +27,7 @@
   "dependencies": {
     "discord.js": "^13.4.0",
     "dotenv": "^16.0.0",
-    "sheweny": "^3.4.1",
-    "toml": "^3.0.0"
+    "sheweny": "^3.4.1"
   },
   "devDependencies": {
     "ts-node-dev": "^1.1.8",
