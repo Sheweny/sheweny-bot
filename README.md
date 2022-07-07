@@ -19,12 +19,11 @@ A bot using sheweny framework for official discord server.
 ## How to install
 
 1. Clone the repo
-2. Clone `config.template.toml` into the main directory and rename it to `config.toml`
-3. Install the dependencies: `npm install`
-4. Change the data like `guildId` in code
-5. Add `.env` file with BOT_TOKEN variable inside
-6. Compile typescript : `npm run build`
-7. Start the bot: `npm run start`
+2. Install the dependencies: `npm install`
+3. Change constants in `src/utils/Constants`
+4. Add `.env` file with BOT_TOKEN variable inside
+5. Compile typescript : `npm run build`
+6. Start the bot: `npm run start`
 
 ## Contributions/Licence
 
