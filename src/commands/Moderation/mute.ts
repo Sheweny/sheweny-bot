@@ -23,27 +23,27 @@ export class MuteCommand extends Command {
           description: "The time of mute",
           choices: [{
             name: "60 secondes",
-            value: 60
+            value: 1000 * 60
           },
           {
             name: "5 mins",
-            value: 5 * 60
+            value: 1000 * 5 * 60
           },
           {
             name: "10 mins",
-            value: 10 * 60
+            value: 1000 * 10 * 60
           },
           {
             name: "1 hour",
-            value: 60 * 60
+            value: 1000 * 60 * 60
           },
           {
             name: "1 day",
-            value: 24 * 60 * 60
+            value: 1000 * 24 * 60 * 60
           },
           {
             name: "1 week",
-            value: 7 * 24 * 60 * 60
+            value: 1000 * 7 * 24 * 60 * 60
           }],
           required: true,
         },
