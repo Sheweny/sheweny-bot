@@ -31,7 +31,7 @@ export class WarnCommand extends Command {
     const member = interaction.options.getMember("user") as GuildMember;
     if (!member)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} User not found.`,
+        content: `${this.client.config.EMOTES.ERROR} User not found.`,
         ephemeral: true,
       });
 
@@ -41,7 +41,7 @@ export class WarnCommand extends Command {
     const embed = embedMod(
       member,
       interaction.user,
-      this.client.config.colors.orange,
+      this.client.config.COLORS.ORANGE,
       "warn",
       { reason }
     );
@@ -50,7 +50,7 @@ export class WarnCommand extends Command {
       sendLogChannel(this.client, interaction, { embeds: [embed] });
     } catch {
       return interaction.reply({
-        content: `${this.client.config.emojis.error} I can't send message to this user`,
+        content: `${this.client.config.EMOTES.ERROR} I can't send message to this user`,
         ephemeral: true,
       });
     }

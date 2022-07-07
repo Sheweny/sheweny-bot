@@ -61,7 +61,7 @@ export class PurgeCommand extends Command {
           argsNumberMessages > 100
         )
           return interaction.reply({
-            content: `${this.client.config.emojis.error} You must specify a number between 1 and 100.`,
+            content: `${this.client.config.EMOTES.ERROR} You must specify a number between 1 and 100.`,
             ephemeral: true,
           });
         const messagesToDelete = await channelTextMessages.messages.fetch({
@@ -84,13 +84,13 @@ export class PurgeCommand extends Command {
               )
             )
               interaction.reply({
-                content: `${this.client.config.emojis.error} You cannot delete messages older than 14 days.`,
+                content: `${this.client.config.EMOTES.ERROR} You cannot delete messages older than 14 days.`,
                 ephemeral: true,
               });
             else {
               console.error(err);
               interaction.reply({
-                content: `${this.client.config.emojis.error} An error occurred. Please try again.`,
+                content: `${this.client.config.EMOTES.ERROR} An error occurred. Please try again.`,
                 ephemeral: true,
               });
             }
@@ -102,7 +102,7 @@ export class PurgeCommand extends Command {
         const user = interaction.options.getUser("user", true);
         if (isNaN(argNumber) || argNumber < 1 || argNumber > 100)
           return interaction.reply({
-            content: `${this.client.config.emojis.error} You must specify a number between 1 and 100.`,
+            content: `${this.client.config.EMOTES.ERROR} You must specify a number between 1 and 100.`,
             ephemeral: true,
           });
 

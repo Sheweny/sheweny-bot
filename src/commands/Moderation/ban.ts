@@ -35,14 +35,14 @@ export class BanCommand extends Command {
     const member = interaction.options.getMember("user", true) as GuildMember;
     if (!member)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} User not found`,
+        content: `${this.client.config.EMOTES.ERROR} User not found`,
         ephemeral: true,
       });
 
     const embed = embedMod(
       member,
       interaction.user,
-      this.client.config.colors.red,
+      this.client.config.COLORS.RED,
       "ban",
       { reason, guild: interaction.guild! }
     );
@@ -60,7 +60,7 @@ export class BanCommand extends Command {
       }
     } else
       return interaction.reply({
-        content: `${this.client.config.emojis.error} I can't ban this user`,
+        content: `${this.client.config.EMOTES.ERROR} I can't ban this user`,
         ephemeral: true,
       });
   }

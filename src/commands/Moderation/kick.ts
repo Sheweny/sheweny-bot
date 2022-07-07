@@ -34,7 +34,7 @@ export class KickCommand extends Command {
       interaction.options.getString("reason", false) || "No reason was given";
     if (!member)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} User not found`,
+        content: `${this.client.config.EMOTES.ERROR} User not found`,
         ephemeral: true,
       });
 
@@ -44,14 +44,14 @@ export class KickCommand extends Command {
       ) <= 0
     )
       return interaction.reply({
-        content: `${this.client.config.emojis.error} You don't have the permission for this`,
+        content: `${this.client.config.EMOTES.ERROR} You don't have the permission for this`,
         ephemeral: true,
       });
 
     const embed = embedMod(
       member,
       interaction.user,
-      this.client.config.colors.red,
+      this.client.config.COLORS.RED,
       "kick",
       { reason, guild: interaction.guild! }
     );
@@ -69,7 +69,7 @@ export class KickCommand extends Command {
       }
     } else
       return interaction.reply({
-        content: `${this.client.config.emojis.error} I can't kick this user`,
+        content: `${this.client.config.EMOTES.ERROR} I can't kick this user`,
         ephemeral: true,
       });
   }
