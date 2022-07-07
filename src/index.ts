@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const constants = require("./utils/Constants");
-console.log(constants);
 
 const packageInfos = readFileSync(
   join(__dirname, "../package.json")
