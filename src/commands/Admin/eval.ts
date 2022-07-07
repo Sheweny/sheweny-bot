@@ -31,7 +31,7 @@ export class EvalCommand extends Command {
     } catch (err: any) {
       return interaction.reply(`\`\`\`js\n${err.stack}\`\`\``);
     }
-    const token = this.client.config.token;
+    const token = process.env.BOT_TOKEN as string;
     const regex = new RegExp(token, "g");
     evaled = evaled.replaceAll(regex, "no.");
 
