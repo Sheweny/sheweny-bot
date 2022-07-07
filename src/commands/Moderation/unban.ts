@@ -29,7 +29,7 @@ export class UnbanCommand extends Command {
       )) as User;
       if (!user)
         return interaction.reply({
-          content: `${this.client.config.emojis.error} User not found.`,
+          content: `${this.client.config.EMOTES.ERROR} User not found.`,
           ephemeral: true,
         });
 
@@ -38,7 +38,7 @@ export class UnbanCommand extends Command {
       const embed = embedMod(
         user,
         interaction.user,
-        this.client.config.colors.green,
+        this.client.config.COLORS.GREEN,
         "unban"
       );
       await interaction.reply({ embeds: [embed], ephemeral: true });
@@ -49,12 +49,12 @@ export class UnbanCommand extends Command {
 
       if (e.message.match("Unknown User"))
         return interaction.reply({
-          content: `${this.client.config.emojis.error} User not found.`,
+          content: `${this.client.config.EMOTES.ERROR} User not found.`,
           ephemeral: true,
         });
       else
         return interaction.reply({
-          content: `${this.client.config.emojis.error} An error has occurred. Please try again.`,
+          content: `${this.client.config.EMOTES.ERROR} An error has occurred. Please try again.`,
           ephemeral: true,
         });
     }
