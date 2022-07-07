@@ -70,5 +70,5 @@ export function formatTime(time: number): string {
   if (time < 3600 * 1000) return `${time / (60 * 1000)} minutes(s)`
   if (time < 86400 * 1000) return `${time / (3600 * 1000)} hour(s)`
   if (time < 604800 * 1000) return `${time / (86400 * 1000)} day(s)`
-  return `${time / 604800 * 1000} week(s)`
+  return `${time / (604800 * 1000)} week(s)`
 }
