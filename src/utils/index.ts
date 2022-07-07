@@ -21,7 +21,10 @@ export function sendLogChannel(
     interaction.guild!,
     client.config.channels.moderation_logs
   ) as TextChannel;
-  if (channel && channel.permissionsFor(interaction.guild!.me!).has("SEND_MESSAGES"))
+  if (
+    channel &&
+    channel.permissionsFor(interaction.guild!.me!).has("SEND_MESSAGES")
+  )
     channel.send(options);
 }
 
@@ -39,35 +42,38 @@ export function embedMod(
 ) {
   let description = `**Action**: ${action}`;
   if (options?.reason) description += `\n**Reason**: ${options.reason}`;
-  if (options?.time)
-    description += `\n**Time**: ${formatTime(options?.time)}`
-      ;
-  if (options?.messages) description += `\n**Messages**: ${options.messages} messages`;
+  if (options?.time) description += `\n**Time**: ${formatTime(options?.time)}`;
+  if (options?.messages)
+    description += `\n**Messages**: ${options.messages} messages`;
   if (options?.guild) description += `\n**Guild**: ${options.guild.name}`;
 
   const embed = new MessageEmbed()
     .setColor(color)
     .setDescription(description)
     .setTimestamp()
-    .setFooter(
-      author.username,
-      author.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-    );
+    .setFooter({
+      text: author.username,
+      iconURL: author.displayAvatarURL({
+        dynamic: true,
+        format: "png",
+        size: 512,
+      }),
+    });
 
   if (member) {
     const m = member instanceof GuildMember ? member.user : member;
-    embed.setAuthor(
-      `${m.tag} (${m.id})`,
-      m.displayAvatarURL({ dynamic: true, format: "png", size: 512 })
-    );
+    embed.setAuthor({
+      name: `${m.tag} (${m.id})`,
+      iconURL: m.displayAvatarURL({ dynamic: true, format: "png", size: 512 }),
+    });
   }
 
   return embed;
 }
 
 export function formatTime(time: number): string {
-  if (time < 3600) return `${time / 60} minutes(s)`
-  if (time < 86400) return `${time / 3600} hour(s)`
-  if (time < 604800) return `${time / 86400} day(s)`
-  return `${time / 604800} week(s)`
+  if (time < 3600) return `${time / 60} minutes(s)`;
+  if (time < 86400) return `${time / 3600} hour(s)`;
+  if (time < 604800) return `${time / 86400} day(s)`;
+  return `${time / 604800} week(s)`;
 }
