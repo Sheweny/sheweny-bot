@@ -3,7 +3,7 @@ import { join } from "path";
 import { CommandInteraction, Message } from "discord.js";
 import { ShewenyClient } from "sheweny";
 import { IConfig } from "./interfaces/Config";
-import dotenv, { config } from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
 const constants = require("./utils/Constants");
