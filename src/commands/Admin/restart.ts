@@ -15,7 +15,7 @@ export class RestartCommand extends Command {
     await this.client.managers.commands!.deleteAllCommands(
       "877090306103840778"
     );
-    await interaction.reply(`${this.client.config.emojis.success}Success`);
+    await interaction.reply(`${this.client.config.EMOTES.SUCCESS}Success`);
     return process.exit();
   }
 }

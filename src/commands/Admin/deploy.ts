@@ -99,11 +99,11 @@ export class PullCommand extends Command {
       let msg = "";
       for (const st of status) {
         if (st.status === "success")
-          msg += `${c.config.emojis.success} __**${st.name} :**__ Success (\`${st.command}\`)\n`;
+          msg += `${c.config.EMOTES.SUCCESS} __**${st.name} :**__ Success (\`${st.command}\`)\n`;
         if (st.status === "error")
-          msg += `${c.config.emojis.error} __**${st.name} :**__ Failed (\`${st.command}\`)\nError :\n${st.error}\n`;
+          msg += `${c.config.EMOTES.ERROR} __**${st.name} :**__ Failed (\`${st.command}\`)\nError :\n${st.error}\n`;
         if (st.status === "queuded")
-          msg += `${c.config.emojis.loading} __**${st.name} :**__ Queued (\`${st.command}\`)\n`;
+          msg += `${c.config.EMOTES.LOADING} __**${st.name} :**__ Queued (\`${st.command}\`)\n`;
       }
       return msg;
     }

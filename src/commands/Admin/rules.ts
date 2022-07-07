@@ -62,10 +62,10 @@ Server Invite: https://discord.gg/qgd85nEf5a
     ) as TextChannel;
     if (!channel)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} Channel not found`,
+        content: `${this.client.config.EMOTES.ERROR} Channel not found`,
       });
     await interaction.reply({
-      content: `${this.client.config.emojis.success} Success`,
+      content: `${this.client.config.EMOTES.SUCCESS} Success`,
     });
     const button = new MessageActionRow().addComponents(
       new MessageButton()

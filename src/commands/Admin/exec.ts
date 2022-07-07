@@ -39,7 +39,7 @@ export class ExecCommand extends Command {
 
     const command = interaction.options.getString("command", true);
     await interaction.reply(
-      `${this.client.config.emojis.loading} Executing \`${command}\`...`
+      `${this.client.config.EMOTES.LOADING} Executing \`${command}\`...`
     );
 
     let stdOut = await doExec(command).catch(
