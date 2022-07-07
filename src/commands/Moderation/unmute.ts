@@ -18,28 +18,32 @@ export class UnmuteCommand extends Command {
           required: true,
         },
         {
-          name: 'reason',
+          name: "reason",
           type: "STRING",
           description: "The reason of unmute.",
-          required: false
-        }
+          required: false,
+        },
       ],
       userPermissions: ["BAN_MEMBERS"],
     });
   }
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user") as GuildMember;
-    const reason = interaction.options.getString("reason", false) || "No reason was given"
+    const reason =
+      interaction.options.getString("reason", false) || "No reason was given";
     if (!member)
       return interaction.reply({
-        content: `${this.client.config.emojis.error} User not found.`,
+        content: `${this.client.config.EMOTES.ERROR} User not found.`,
         ephemeral: true,
       });
 
     if (!member.isCommunicationDisabled()) {
-      return interaction.reply({ content: "This user is not muted", ephemeral: true })
+      return interaction.reply({
+        content: "This user is not muted",
+        ephemeral: true,
+      });
     }
-    member.timeout(null, reason)
+    member.timeout(null, reason);
     await interaction.reply({
       content: `${member.user.tag} is now unmuted`,
       ephemeral: true,
@@ -48,7 +52,7 @@ export class UnmuteCommand extends Command {
     const embed = embedMod(
       member,
       interaction.user,
-      this.client.config.colors.green,
+      this.client.config.COLORS.GREEN,
       "unmute",
       { reason: reason }
     );

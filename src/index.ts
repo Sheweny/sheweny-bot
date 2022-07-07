@@ -1,15 +1,14 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import type { CommandInteraction, Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { ShewenyClient } from "sheweny";
-import toml from "toml";
 import { IConfig } from "./interfaces/Config";
-import dotenv from "dotenv";
+import dotenv, { config } from "dotenv";
 dotenv.config();
 
-const configToml = toml.parse(
-  readFileSync(join(__dirname, "../config.toml")).toString()
-);
+const constants = require("./utils/Constants");
+console.log(constants);
+
 const packageInfos = readFileSync(
   join(__dirname, "../package.json")
 ).toString();
@@ -21,11 +20,11 @@ declare module "sheweny" {
 }
 
 class Client extends ShewenyClient {
-  readonly config: IConfig = configToml;
+  readonly config: IConfig = constants;
 
   constructor() {
     super({
-      admins: configToml.bot_admins,
+      admins: constants.BOT_ADMINS,
       intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
       partials: ["GUILD_MEMBER"],
       mode: "development",

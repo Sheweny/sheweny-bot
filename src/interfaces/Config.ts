@@ -1,19 +1,18 @@
 import type { ColorResolvable, EmojiResolvable } from "discord.js";
 
 export interface IConfig {
-  token: string;
-  bot_admins: string[];
-  emojis: {
-    success: EmojiResolvable;
-    error: EmojiResolvable;
-    loading: EmojiResolvable;
+  ADMINS: string[];
+  EMOTES: {
+    SUCCESS: EmojiResolvable;
+    ERROR: EmojiResolvable;
+    LOADING: EmojiResolvable;
   };
-  channels: {
-    moderation_logs: string;
+  CHANNELS: {
+    LOGS: string;
   };
-  colors: {
-    red: ColorResolvable;
-    orange: ColorResolvable;
-    green: ColorResolvable;
+  COLORS: {
+    RED: ColorResolvable;
+    ORANGE: ColorResolvable;
+    GREEN: ColorResolvable;
   };
 }
