@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/Sheweny/sheweny-bot#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "discord.js": "^13.4.0",
     "dotenv": "^16.0.0",
     "sheweny": "^3.4.1"
