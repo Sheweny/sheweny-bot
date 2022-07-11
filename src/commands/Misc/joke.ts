@@ -18,11 +18,10 @@ export class Joke extends Command {
     const request = await axios.get("https://v2.jokeapi.dev/joke/Programming");
     const { data } = request;
     const embed = new MessageEmbed();
-    if (data.type === "single") {
-      embed.setDescription(data.joke);
-    } else {
-      embed.setDescription(`${data.setup}\n||${data.delivery}||`);
-    }
+    embed.description =
+      data.type === "single"
+        ? data.joke
+        : `${data.setup}\n||${data.delivery}||`;
     interaction.reply({ embeds: [embed] });
   }
 }
