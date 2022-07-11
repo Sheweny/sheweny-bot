@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Command } from "sheweny";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 
 export class Joke extends Command {
@@ -17,11 +17,8 @@ export class Joke extends Command {
   async execute(interaction: CommandInteraction) {
     const request = await axios.get("https://v2.jokeapi.dev/joke/Programming");
     const { data } = request;
-    const embed = new MessageEmbed();
-    embed.description =
-      data.type === "single"
-        ? data.joke
-        : `${data.setup}\n||${data.delivery}||`;
-    interaction.reply({ embeds: [embed] });
+    interaction.reply(
+      data.type === "single" ? data.joke : `${data.setup}\n||${data.delivery}||`
+    );
   }
 }
