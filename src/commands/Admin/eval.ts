@@ -1,6 +1,6 @@
 import util from "util";
 import { Command, ShewenyClient } from "sheweny";
-import type { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 
 export class EvalCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -13,7 +13,7 @@ export class EvalCommand extends Command {
         {
           name: "code",
           description: "The code to eval",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: true,
         },
       ],
@@ -21,7 +21,7 @@ export class EvalCommand extends Command {
     });
   }
   async execute(interaction: CommandInteraction) {
-    let evaled: string = interaction.options.getString("code", true);
+    let evaled: string = interaction.options.get("code", true).value as string;
 
     try {
       evaled = await eval(evaled);

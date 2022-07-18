@@ -1,5 +1,9 @@
 import { Command } from "sheweny";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import {
+  ApplicationCommandOptionType,
+  CommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
 import type { ShewenyClient } from "sheweny";
 
 export class Share extends Command {
@@ -13,13 +17,13 @@ export class Share extends Command {
       options: [
         {
           name: "url",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "url of qr code",
           required: true,
         },
         {
           name: "description",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "description of shared content",
           required: true,
         },
@@ -28,9 +32,10 @@ export class Share extends Command {
   }
 
   async execute(interaction: CommandInteraction) {
-    const url = interaction.options.getString("url", true);
-    const description = interaction.options.getString("description", true);
-    const embed = new MessageEmbed()
+    const url = interaction.options.get("url", true).value as string;
+    const description = interaction.options.get("description", true)
+      .value as string;
+    const embed = new EmbedBuilder()
       .setDescription(`${description}\n${url}`)
       .setImage(`https://qrtag.net/api/qr_6.png?url=${url}`);
     interaction.reply({ embeds: [embed] });

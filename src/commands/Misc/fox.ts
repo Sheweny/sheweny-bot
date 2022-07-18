@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Command } from "sheweny";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 
 export class Fox extends Command {
@@ -17,7 +17,7 @@ export class Fox extends Command {
   async execute(interaction: CommandInteraction) {
     const request = await axios.get("https://randomfox.ca/floof/");
     const { data } = request;
-    const embed = new MessageEmbed().setImage(data.image);
+    const embed = new EmbedBuilder().setImage(data.image);
     interaction.reply({ embeds: [embed] });
   }
 }
