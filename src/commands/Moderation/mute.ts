@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { GuildMember } from "discord.js";
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel, formatTime } from "../../utils";
 
@@ -13,13 +13,13 @@ export class MuteCommand extends Command {
       options: [
         {
           name: "user",
-          type: "USER",
+          type: ApplicationCommandOptionType.User,
           description: "The user to mute",
           required: true,
         },
         {
           name: "time",
-          type: "INTEGER",
+          type: ApplicationCommandOptionType.Integer,
           description: "The time of mute",
           choices: [
             {
@@ -52,7 +52,7 @@ export class MuteCommand extends Command {
         {
           name: "reason",
           description: "The reason of mute",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: false,
         },
       ],
@@ -61,10 +61,11 @@ export class MuteCommand extends Command {
     });
   }
   async execute(interaction: CommandInteraction) {
-    const member = interaction.options.getMember("user", true) as GuildMember;
-    const muteTime = interaction.options.getInteger("time", true);
+    const member = interaction.options.getMember("user") as GuildMember;
+    const muteTime = interaction.options.get("time")?.value as number;
     const reason =
-      interaction.options.getString("reason", false) || "No reason was given";
+      (interaction.options.get("reason", false)?.value as string) ||
+      "No reason was given";
 
     if (!member)
       return interaction.reply({

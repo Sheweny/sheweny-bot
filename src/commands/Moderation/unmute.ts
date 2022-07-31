@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { GuildMember } from "discord.js";
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
@@ -13,13 +13,13 @@ export class UnmuteCommand extends Command {
       options: [
         {
           name: "user",
-          type: "USER",
+          type: ApplicationCommandOptionType.User,
           description: "The user to unmute",
           required: true,
         },
         {
           name: "reason",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "The reason of unmute.",
           required: false,
         },
@@ -30,7 +30,8 @@ export class UnmuteCommand extends Command {
   async execute(interaction: CommandInteraction) {
     const member = interaction.options.getMember("user") as GuildMember;
     const reason =
-      interaction.options.getString("reason", false) || "No reason was given";
+      (interaction.options.get("reason", false)?.value as string) ||
+      "No reason was given";
     if (!member)
       return interaction.reply({
         content: `${this.client.config.EMOTES.ERROR} User not found.`,
