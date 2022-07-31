@@ -1,6 +1,6 @@
 import { Command, ShewenyClient } from "sheweny";
 import type { CommandInteraction } from "discord.js";
-import { MessageSelectMenu, MessageActionRow } from "discord.js";
+import { SelectMenuBuilder, ActionRowBuilder } from "discord.js";
 
 export class PingCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -12,8 +12,8 @@ export class PingCommand extends Command {
     });
   }
   execute(interaction: CommandInteraction) {
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
+    const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+      new SelectMenuBuilder()
         .setCustomId("select")
         .setPlaceholder("Nothing selected")
         .addOptions([

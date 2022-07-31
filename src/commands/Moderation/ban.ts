@@ -24,8 +24,8 @@ export class BanCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["BAN_MEMBERS"],
-      clientPermissions: ["BAN_MEMBERS"],
+      userPermissions: ["BanMembers"],
+      clientPermissions: ["BanMembers"],
     });
   }
   async execute(interaction: CommandInteraction) {

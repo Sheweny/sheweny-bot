@@ -24,8 +24,8 @@ export class KickCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["KICK_MEMBERS"],
-      clientPermissions: ["KICK_MEMBERS"],
+      userPermissions: ["KickMembers"],
+      clientPermissions: ["KickMembers"],
     });
   }
   async execute(interaction: CommandInteraction) {

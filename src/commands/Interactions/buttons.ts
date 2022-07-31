@@ -1,6 +1,6 @@
 import { Command, ShewenyClient } from "sheweny";
-import type { CommandInteraction } from "discord.js";
-import { MessageButton, MessageActionRow } from "discord.js";
+import { ButtonStyle, CommandInteraction } from "discord.js";
+import { ButtonBuilder, ActionRowBuilder } from "discord.js";
 
 export class PingCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -12,30 +12,30 @@ export class PingCommand extends Command {
     });
   }
   execute(interaction: CommandInteraction) {
-    const row = new MessageActionRow()
+    const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
           .setCustomId("primary")
           .setLabel("Primary")
-          .setStyle("PRIMARY")
+          .setStyle(ButtonStyle.Primary)
       )
       .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
           .setCustomId("secondary")
           .setLabel("Secondary")
-          .setStyle("SECONDARY")
+          .setStyle(ButtonStyle.Secondary)
       )
       .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
           .setCustomId("success")
           .setLabel("Success")
-          .setStyle("SUCCESS")
+          .setStyle(ButtonStyle.Success)
       )
       .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
           .setCustomId("danger")
           .setLabel("Danger")
-          .setStyle("DANGER")
+          .setStyle(ButtonStyle.Danger)
       );
     interaction.reply({ content: "Test the buttons", components: [row] });
   }

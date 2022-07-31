@@ -18,8 +18,8 @@ export class UnbanCommand extends Command {
           required: true,
         },
       ],
-      userPermissions: ["MANAGE_GUILD"],
-      clientPermissions: ["BAN_MEMBERS"],
+      userPermissions: ["ManageGuild"],
+      clientPermissions: ["BanMembers"],
     });
   }
   async execute(interaction: CommandInteraction) {
