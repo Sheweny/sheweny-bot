@@ -1,6 +1,6 @@
 import { Command, ShewenyClient } from "sheweny";
 import { exec } from "child_process";
-import type { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 
 export class PullCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -12,7 +12,7 @@ export class PullCommand extends Command {
       options: [
         {
           name: "branch",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "The branch to pull",
           required: true,
         },
@@ -36,7 +36,7 @@ export class PullCommand extends Command {
       });
     };
 
-    const command = interaction.options.getString("branch", true);
+    const command = interaction.options.get("branch", true).value as string;
     await interaction.reply(
       `${this.client.config.EMOTES.LOADING} Executing \`git pull origin ${command}\`...`
     );

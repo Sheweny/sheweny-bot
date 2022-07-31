@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { User } from "discord.js";
+import { ApplicationCommandOptionType, User } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
@@ -13,7 +13,7 @@ export class UnbanCommand extends Command {
       options: [
         {
           name: "user",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "The user to unban",
           required: true,
         },
@@ -25,7 +25,7 @@ export class UnbanCommand extends Command {
   async execute(interaction: CommandInteraction) {
     try {
       const user = (await this.client.util.resolveUser(
-        interaction.options.getString("user", true)
+        interaction.options.get("user", true).value as string
       )) as User;
       if (!user)
         return interaction.reply({

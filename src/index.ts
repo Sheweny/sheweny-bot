@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { CommandInteraction, Message } from "discord.js";
+import { CommandInteraction, Message, Partials } from "discord.js";
 import { ShewenyClient } from "sheweny";
 import { IConfig } from "./interfaces/Config";
 import dotenv from "dotenv";
@@ -24,8 +24,8 @@ class Client extends ShewenyClient {
   constructor() {
     super({
       admins: constants.BOT_ADMINS,
-      intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
-      partials: ["GUILD_MEMBER"],
+      intents: ["Guilds", "GuildMembers", "GuildMessages"],
+      partials: [Partials.GuildMember],
       mode: "development",
       joinThreadsOnCreate: true,
       presence: {
@@ -35,7 +35,6 @@ class Client extends ShewenyClient {
             name: `Sheweny ${
               JSON.parse(packageInfos).dependencies.sheweny.split("^")[1]
             }`,
-            type: "WATCHING",
           },
         ],
       },

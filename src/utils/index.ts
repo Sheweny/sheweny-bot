@@ -1,10 +1,10 @@
 import {
   ColorResolvable,
   CommandInteraction,
-  ContextMenuInteraction,
+  ContextMenuCommandInteraction,
   Guild,
   GuildMember,
-  MessageEmbed,
+  EmbedBuilder,
   MessageOptions,
   MessagePayload,
   TextChannel,
@@ -14,7 +14,7 @@ import type { ShewenyClient } from "sheweny";
 
 export function sendLogChannel(
   client: ShewenyClient,
-  interaction: CommandInteraction | ContextMenuInteraction,
+  interaction: CommandInteraction | ContextMenuCommandInteraction,
   options: string | MessageOptions | MessagePayload
 ) {
   const channel = client.util.resolveChannel(
@@ -23,7 +23,9 @@ export function sendLogChannel(
   ) as TextChannel;
   if (
     channel &&
-    channel.permissionsFor(interaction.guild!.me!).has("SEND_MESSAGES")
+    channel
+      .permissionsFor(interaction.guild!.client!.user!)!
+      .has("SendMessages")
   )
     channel.send(options);
 }
@@ -47,15 +49,15 @@ export function embedMod(
     description += `\n**Messages**: ${options.messages} messages`;
   if (options?.guild) description += `\n**Guild**: ${options.guild.name}`;
 
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setColor(color)
     .setDescription(description)
     .setTimestamp()
     .setFooter({
       text: author.username,
       iconURL: author.displayAvatarURL({
-        dynamic: true,
-        format: "png",
+        forceStatic: false,
+        extension: "png",
         size: 512,
       }),
     });
@@ -64,7 +66,11 @@ export function embedMod(
     const m = member instanceof GuildMember ? member.user : member;
     embed.setAuthor({
       name: `${m.tag} (${m.id})`,
-      iconURL: m.displayAvatarURL({ dynamic: true, format: "png", size: 512 }),
+      iconURL: m.displayAvatarURL({
+        forceStatic: false,
+        extension: "png",
+        size: 512,
+      }),
     });
   }
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Command } from "sheweny";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 
 export class Bird extends Command {
@@ -17,7 +17,7 @@ export class Bird extends Command {
   async execute(interaction: CommandInteraction) {
     const request = await axios.get("http://shibe.online/api/birds");
     const { data } = request;
-    const embed = new MessageEmbed().setImage(data[0]);
+    const embed = new EmbedBuilder().setImage(data[0]);
     interaction.reply({ embeds: [embed] });
   }
 }

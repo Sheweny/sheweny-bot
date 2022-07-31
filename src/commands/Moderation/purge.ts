@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, TextChannel } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 
 export class PurgeCommand extends Command {
@@ -13,12 +13,12 @@ export class PurgeCommand extends Command {
         {
           name: "messages",
           description: "Delete messages in a channel.",
-          type: "SUB_COMMAND",
+          type: ApplicationCommandOptionType.Subcommand,
           options: [
             {
               name: "number",
               description: "Number of messages",
-              type: "NUMBER",
+              type: ApplicationCommandOptionType.Number,
               required: true,
             },
           ],
@@ -26,18 +26,18 @@ export class PurgeCommand extends Command {
         {
           name: "user",
           description: "Purge messages from single user.",
-          type: "SUB_COMMAND",
+          type: ApplicationCommandOptionType.Subcommand,
           options: [
             {
               name: "user",
               description: "User",
-              type: "USER",
+              type: ApplicationCommandOptionType.User,
               required: true,
             },
             {
               name: "number",
               description: "Number of messages",
-              type: "NUMBER",
+              type: ApplicationCommandOptionType.Number,
               required: true,
             },
           ],
@@ -47,13 +47,11 @@ export class PurgeCommand extends Command {
     });
   }
   async execute(interaction: CommandInteraction) {
-    switch (interaction.options.getSubcommand(false)) {
+    switch (interaction.options.get("messages")?.value as string) {
       case "messages":
         const channelTextMessages = interaction.channel! as TextChannel;
-        const argsNumberMessages = interaction.options.getNumber(
-          "number",
-          true
-        );
+        const argsNumberMessages = interaction.options.get("number", true)
+          .value as number;
 
         if (
           isNaN(argsNumberMessages) ||
@@ -97,7 +95,8 @@ export class PurgeCommand extends Command {
           });
         break;
       case "user":
-        const argNumber = interaction.options.getNumber("number", true);
+        const argNumber = interaction.options.get("number", true)
+          .value as number;
         const channelTextUser = interaction.channel as TextChannel;
         const user = interaction.options.getUser("user", true);
         if (isNaN(argNumber) || argNumber < 1 || argNumber > 100)

@@ -1,5 +1,5 @@
 import { Command, ShewenyClient } from "sheweny";
-import { GuildMember } from "discord.js";
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import type { CommandInteraction } from "discord.js";
 import { embedMod, sendLogChannel } from "../../utils";
 
@@ -13,14 +13,14 @@ export class WarnCommand extends Command {
       options: [
         {
           name: "user",
-          type: "USER",
+          type: ApplicationCommandOptionType.User,
           description: "The user to warn",
           required: true,
         },
         {
           name: "reason",
           description: "The reason of warn",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           required: false,
         },
       ],
@@ -36,7 +36,8 @@ export class WarnCommand extends Command {
       });
 
     const reason: string =
-      interaction.options.getString("reason") || "No reason was provided.";
+      (interaction.options.get("reason", false)?.value as string) ||
+      "No reason was provided.";
 
     const embed = embedMod(
       member,

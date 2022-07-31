@@ -1,6 +1,6 @@
 import { Command, ShewenyClient } from "sheweny";
 import { exec } from "child_process";
-import type { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 
 export class ExecCommand extends Command {
   constructor(client: ShewenyClient) {
@@ -12,7 +12,7 @@ export class ExecCommand extends Command {
       options: [
         {
           name: "command",
-          type: "STRING",
+          type: ApplicationCommandOptionType.String,
           description: "The command to execute",
           required: true,
         },
@@ -37,7 +37,7 @@ export class ExecCommand extends Command {
       });
     };
 
-    const command = interaction.options.getString("command", true);
+    const command = interaction.options.get("command", true).value as string;
     await interaction.reply(
       `${this.client.config.EMOTES.LOADING} Executing \`${command}\`...`
     );
