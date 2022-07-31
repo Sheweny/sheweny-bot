@@ -24,7 +24,7 @@ export class WarnCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["BAN_MEMBERS"],
+      userPermissions: ["BanMembers"],
     });
   }
   async execute(interaction: CommandInteraction) {

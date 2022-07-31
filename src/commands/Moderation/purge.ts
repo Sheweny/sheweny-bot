@@ -43,7 +43,8 @@ export class PurgeCommand extends Command {
           ],
         },
       ],
-      userPermissions: ["MANAGE_MESSAGES"],
+      userPermissions: ["ManageMessages"],
+      clientPermissions: ["ManageMessages"],
     });
   }
   async execute(interaction: CommandInteraction) {

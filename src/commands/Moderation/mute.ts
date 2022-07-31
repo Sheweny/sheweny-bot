@@ -56,8 +56,8 @@ export class MuteCommand extends Command {
           required: false,
         },
       ],
-      userPermissions: ["MODERATE_MEMBERS"],
-      clientPermissions: ["MODERATE_MEMBERS"],
+      userPermissions: ["ModerateMembers"],
+      clientPermissions: ["ModerateMembers"],
     });
   }
   async execute(interaction: CommandInteraction) {

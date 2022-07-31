@@ -1,5 +1,5 @@
 import { Event } from "sheweny";
-import { MessageEmbed } from "discord.js";
+import { Colors, EmbedBuilder } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 import type { GuildMember, TextChannel } from "discord.js";
 
@@ -12,15 +12,15 @@ export class Ready extends Event {
 
   execute(newMember: GuildMember) {
     if (newMember.guild.id === "877090306103840778") {
-      const embed = new MessageEmbed()
-        .setColor("RED")
+      const embed = new EmbedBuilder()
+        .setColor(Colors.Red)
         .setTitle(`**[-]** ${newMember.user.tag}`)
         .setThumbnail(newMember.user.displayAvatarURL())
         .setDescription(
           "The user " + newMember.user.username + " just left the guild"
         )
         .setTimestamp()
-        .setFooter("Member left the guild");
+        .setFooter({ text: "Member left the guild" });
       const channel = newMember.guild.channels.cache.get(
         "877472366991646730"
       ) as TextChannel;
