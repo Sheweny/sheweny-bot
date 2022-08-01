@@ -28,7 +28,7 @@
     "axios": "^0.27.2",
     "discord.js": "^14.0.1",
     "dotenv": "^16.0.0",
-    "sheweny": "^4.0.1"
+    "sheweny": "^4.0.2"
   },
   "devDependencies": {
     "ts-node-dev": "^1.1.8",
