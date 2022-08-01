@@ -1,7 +1,7 @@
 {
   "name": "sheweny-bot",
   "version": "1.0.0",
-  "description": "A bot using sheweny framework for official discord server",
+  "description": "A bot using sheweny framework for official discord server.",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
