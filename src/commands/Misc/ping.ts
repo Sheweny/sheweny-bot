@@ -9,7 +9,6 @@ export class PingCommand extends Command {
       type: "SLASH_COMMAND",
       category: "Misc",
       cooldown: 10,
-      userPermissions: ["SendMessages"],
     });
   }
 
