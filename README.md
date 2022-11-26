@@ -31,4 +31,4 @@ This project has an MIT license. And you are welcome to contribute.
 
 ## Need help
 
-If you have question or need help, open issue or join [support server](https://discord.gg/qgd85nEf5a).
+If you have question or need help, open issue or join the [support server](https://discord.gg/qgd85nEf5a).
